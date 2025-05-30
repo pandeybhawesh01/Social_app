@@ -6,6 +6,10 @@ import Login from './screens/login'
 import Admin from './screens/admin'
 import Post from './screens/post'
 import AdminList from './screens/adminList'
+import EmailVerify from './screens/emailVerify'
+import ResetPassword from './screens/resetPassword'
+import {ToastContainer} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import PostList from './screens/postList'
 import { ThemeProvider } from './themeSelector/ThemeContext'
@@ -13,18 +17,19 @@ import { ThemeProvider } from './themeSelector/ThemeContext'
 const App = () => {
   return (
     <ThemeProvider>
-    <Router>
+     
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/login" element={<Login/>}/>
+        <Route path="/email-verify" element={<EmailVerify/>}/>
+        <Route path="/reset-password" element={<ResetPassword/>}/>
         <Route path="/admin" element={<Admin/>}/>
         <Route path="/post" element={<Post/>}/>
-       
         <Route path="/adminList" element={<AdminList/>}/>
         <Route path="/postList" element={<PostList/>}/>
       </Routes>
-    </Router>
+      
     </ThemeProvider>
   )
 }

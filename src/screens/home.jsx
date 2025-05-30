@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ThemeSwitcher from '../themeSelector/ThemeSwitcher';
+import Navbar from '../coponents/navbar';
+import Header from '../coponents/header';
 
 function Home() {
   const navigate = useNavigate();
@@ -10,7 +12,13 @@ function Home() {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-admin-pattern p-4">
-      <div className="mb-8 text-center">
+      <Navbar/>
+      <Header/>
+      
+    </div>
+  );
+}
+{/* <div className="mb-8 text-center">
         <h1 className="text-5xl font-extrabold text-gray">Reelify</h1>
         <p className="mt-2 text-xl text-moderategray">Upload and share your best reels</p>
       </div>
@@ -23,7 +31,7 @@ function Home() {
             Please select your login option below
           </p>
         </div>
-        {/* Add Theme Switcher Here */}
+        
         <ThemeSwitcher />
         <div
           className="w-full flex justify-center items-center bg-blue-green text-whitetext py-3 rounded-lg font-medium text-lg mt-6 cursor-pointer hover:bg-blue-green-hover transition duration-300 shadow-md"
@@ -37,9 +45,6 @@ function Home() {
         >
           Login Admin
         </div>
-      </div>
-    </div>
-  );
-}
+      </div> */}
 
 export default Home;

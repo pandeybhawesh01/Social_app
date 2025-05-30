@@ -1,8 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 
 
 @theme {
   --color-background: #EDE9FE; 
+}
+*{
+  font-family: "Outfit", sans-serif;
 }
 
 :root {
@@ -17,7 +21,7 @@
   --border-bordergray: #CBD5E1;
   --focus-focusblue: #7C3AED;
   --focus-ring-focusblue: #7C3AED;
-  --bg-containerwhite: rgba(248, 250, 252, 0.8);
+  --bg-containerwhite: rgba(203, 201, 204, 0.8);
   --hover-bg-grayhover: #DDD6FE;
 }
 
@@ -29,10 +33,10 @@
   --text-gray: #1E3A8A;
   --text-lightgray: #94A3B8;
   --text-moderategray: #94A3B8;
-  --border-bordergray: #CBD5E1;
+  --border-bordergray: #9499a0;
   --focus-focusblue: #7C3AED;
   --focus-ring-focusblue: #7C3AED;
-  --bg-containerwhite: rgba(248, 250, 252, 0.8);
+  --bg-containerwhite: #e3e3e6;
   --hover-bg-grayhover: #DDD6FE;
 }
 
@@ -91,6 +95,16 @@
   --bg-containerwhite: rgba(226, 232, 240, 0.65);
   --hover-bg-grayhover: #C3DAFE;
 }
+/* Prevent Chrome autofill blue background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #f9fafb inset !important;
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 9999s ease-out;
+}
+
 
 /* Apply variables to utilities */
 @layer utilities {
