@@ -11,7 +11,7 @@ const Sidebar = () => {
   return (
     <div className="fixed top-0 left-0 h-screen w-64 bg-blue-green text-whitetext flex flex-col p-6 shadow-2xl">
       <h1 className="text-3xl font-extrabold mb-8 text-center">Reelify</h1>
-      <nav className="flex flex-col space-y-4">
+      <nav className="flex flex-col space-y-2">
         <Link to="/" className="flex items-center gap-3 p-3 rounded-md hover:bg-blue-green-hover transition">
           <HomeIcon />
           <span className="text-lg font-semibold">Home</span>
@@ -35,6 +35,9 @@ const Sidebar = () => {
         <Link to="/home" className="flex items-center gap-3 p-3 rounded-md hover:bg-blue-green-hover transition">
           <LogoutIcon />
           <span className="text-lg font-semibold">Logout</span>
+        </Link>
+        <Link to="/bot" className="flex items-center gap-3 p-3 rounded-md hover:bg-blue-green-hover transition">
+          <span className="text-lg font-semibold">Gyani</span>
         </Link>
       </nav>
     </div>

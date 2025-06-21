@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import PostList from './screens/postList'
 import { ThemeProvider } from './themeSelector/ThemeContext'
+import Bot from './screens/bot'
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/post" element={<Post/>}/>
         <Route path="/adminList" element={<AdminList/>}/>
         <Route path="/postList" element={<PostList/>}/>
+        <Route path="/bot" element={<Bot/>}/>
       </Routes>
       
     </ThemeProvider>

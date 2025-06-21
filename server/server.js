@@ -7,6 +7,7 @@ import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoute.js';
 import postRouter from './routes/postRoutes.js';
 import fileUpload from 'express-fileupload';
+import botRouter from './routes/botRoutes.js';
 
 const app =express()
 const port= process.env.PORT|| 4000;
@@ -28,6 +29,7 @@ app.get('/',(req,res)=>{
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
 app.use('/api/post',postRouter)
+app.use('/api/bot',botRouter)
 
 app.listen(port,()=>{
     console.log(`server started on port ${port}`)
