@@ -22,6 +22,7 @@ const Sidebar = () => {
   ];
 
   return (
+
     <div
       className={
         `fixed top-0 left-0 h-screen bg-blue-green text-whitetext flex flex-col shadow-2xl transition-all duration-300 ` +
@@ -47,6 +48,7 @@ const Sidebar = () => {
             {isOpen && <span className="ml-4 font-medium">{label}</span>}
           </Link>
         ))}
+
       </nav>
     </div>
   );
