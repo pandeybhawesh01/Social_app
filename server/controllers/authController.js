@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
 import transporter from '../config/nodemailer.js';
 import { EMAIL_VERIFY_TEMPLATE,PASSWORD_RESET_TEMPLATE } from '../config/emailTemplates.js';
+import { uploadToCloudinary } from '../config/cloudinary.js';
+import fs from 'fs';
 
 
 export const register = async (req, res) => {
@@ -11,16 +13,35 @@ export const register = async (req, res) => {
     if (!name || !email || !password) {
         return res.json({ success: false, message: 'Please provide all fields' })
     }
-
+    
     try {
         const existingUser = await userModel.findOne({ email });
         if (existingUser) {
             return res.json({ success: false, message: ' User already exists' });
         }
+        let imageUrl='';
+
+        if(req.files && req.files.image)
+        {
+            const file=req.files.image;
+           if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+        return res.json({ success: false, message: 'Please upload a valid image file (e.g., JPEG, PNG)' });
+      }
+
+      // Upload to Cloudinary
+      try {
+        const result = await uploadToCloudinary(file.tempFilePath, {
+          folder: 'Users',
+        });
+        imageUrl = result.url;
+      } catch (uploadError) {
+        return res.json({ success: false, message: uploadError });
+      }
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = new userModel({ name, email, password: hashedPassword })
+        const user = new userModel({ name, email, password: hashedPassword ,image:imageUrl})
         await user.save();
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
@@ -41,7 +62,7 @@ export const register = async (req, res) => {
 
         await transporter.sendMail(mailOptions);
 
-        return res.json({ success: true })
+        return res.json({ success: true ,message:"user registered successfully"})
     }
     catch (error) {
         return res.json({ success: false, message: error.message })
