@@ -5,6 +5,7 @@ const userInfoSchema = new mongoose.Schema({
     username: { type: String, required: true },
     profilePic: { type: String, default: "" },
     email: { type: String, required: true },
+    college: { type: String, default: "" },
 }, { _id: false });
 
 // Comment schema
@@ -19,6 +20,8 @@ const singlePostSchema = new mongoose.Schema({
     image: { type: String },
     content: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
+    type:{ type: String, default: ""},
+    college: { type: String, default: "" },
     likes: [userInfoSchema],
     comments: [commentSchema]
 });

@@ -8,7 +8,7 @@ postRouter.get('/allPosts',userAuth,getPosts);
 postRouter.post('/createPost',userAuth,createPost);
 postRouter.delete("/delete-post/:postId", userAuth, deletePost);
 postRouter.put("/update-post/:postId", userAuth, updatePost);
-postRouter.post("/like-post/:userId/:userPostsId",userAuth,createLike);
+postRouter.post("/like-post/:userPostsId/:postId",userAuth,createLike);
 postRouter.post("/comment/:userPostsId/:postId", userAuth, createComment);
 postRouter.post("/allUsersPosts", userAuth, getAllPosts);
 

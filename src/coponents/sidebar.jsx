@@ -7,6 +7,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import ArticleIcon from '@mui/icons-material/Article';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -19,6 +20,7 @@ const Sidebar = () => {
     { to: '/post', Icon: PostAddIcon, label: 'New Post' },
     { to: '/postList', Icon: ArticleIcon, label: 'Posts' },
     { to: '/logout', Icon: LogoutIcon, label: 'Logout' },
+    { to: '/bot', Icon: SmartToyOutlinedIcon, label: 'Gyani' },
   ];
 
   return (

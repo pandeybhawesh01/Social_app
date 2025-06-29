@@ -28,7 +28,7 @@ export const createPost = async (req, res) => {
         if (!user.isAccountVerified) {
             return res.json({ success: false, message: "You need to get verified to create posts" })
         }
-        const {content} = req.body;
+        const {content,college,type} = req.body;
         if (!user) {
             return res.json({ success: false, message: "user not found" })
         }
@@ -54,6 +54,8 @@ export const createPost = async (req, res) => {
         const newPost = {
             image:imageUrl,
             content,
+            college,
+            type,
             createdAt: new Date(),
             likes: [],
             comments: []
@@ -116,14 +118,32 @@ export const updatePost = async (req, res) => {
         if (!post) {
             return res.json({ success: false, message: "Post not found" });
         }
-        const { content, image } = req.body;
+        const { content,college,type } = req.body;
         if (content.length === 0) {
             return res.json({ success: false, message: "write the updated content" })
         }
         post.content = content;
-        if (image) {
-            post.image = image;
+        post.college=college;
+        post.type=type;
+         let imageUrl = ''
+
+        if (req.files && req.files.image) {
+            const file = req.files.image;
+            if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+                return res.json({ success: false, message: 'Please upload a valid image file (e.g., JPEG, PNG)' });
+            }
+            try {
+                const result = await uploadToCloudinary(file.tempFilePath, {
+                    folder: 'Users',
+                });
+                imageUrl = result.url;
+            }
+            catch (uploadError) {
+                return res.json({ success: false, message: uploadError });
+            }
+
         }
+        post.image=imageUrl;
         await userPosts.save();
         return res.status(200).json({ success: true, message: "Post updated successfully" });
 
@@ -208,7 +228,7 @@ export const getAllPosts = async (req, res) => {
       { $unwind: "$posts" }, 
       {
         $project: {
-          _id: 0,
+          _id: "$_id",
           owner: "$owner",
           post: "$posts"
         }
