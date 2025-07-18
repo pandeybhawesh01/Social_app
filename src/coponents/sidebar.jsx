@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PeopleIcon from '@mui/icons-material/People';
 import AddIcon from '@mui/icons-material/Add';
-import DescriptionIcon from '@mui/icons-material/Description';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -18,10 +15,7 @@ const Sidebar = () => {
 
   const menuItems = [
     { to: '/dashboard', icon: HomeIcon, label: 'Home' },
-    { to: '/admin', icon: PersonAddIcon, label: 'Create Admin' },
-    { to: '/adminList', icon: PeopleIcon, label: 'Admins' },
     { to: '/post', icon: AddIcon, label: 'New Post' },
-    { to: '/postList', icon: DescriptionIcon, label: 'Posts' },
     { to: '/bot', icon: AutoGraphIcon, label: 'Gyani' },
     { to: '/profile', icon: PersonIcon, label: 'Profile' },
     { to: '/logout', icon: LogoutIcon, label: 'Logout' },
@@ -34,7 +28,6 @@ const Sidebar = () => {
         isOpen ? "w-64" : "w-16"
       )}
     >
-      {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-purple-500/30">
         {isOpen && (
           <h1 className="text-xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">

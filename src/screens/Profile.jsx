@@ -9,6 +9,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Sidebar from '../coponents/sidebar';
 import ProfileHeader from '../coponents/ProfileHeader';
 import useProfileViewModel from '../viewModels/profileViewModel';
+import EditProfileModal from '../coponents/EditProfileModal';
 const mockProfile = {
   id: 1,
   name: 'Bhawesh Pandey',
@@ -49,14 +50,16 @@ export default function Profile() {
   // const [posts] = useState(mockPosts);
   const [activeTab, setActiveTab] = useState('posts');
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { profile, posts, loading, error, fetchProfile, fetchPosts } =
-    useProfileViewModel();
+  const { profile, posts, loading, error, fetchProfile, fetchPosts,editProfile } = useProfileViewModel();
 
   useEffect(() => {
     fetchProfile();
     fetchPosts();
-  }, [loading, profile, posts, error]);  
-  console.log("first", profile);
+  }, []);  
+  const handleSaveProfile = (upd) => {
+
+  };
+  console.log("profile", profile);
   console.log("posgts ", posts);
   if(loading){
     return(
@@ -75,13 +78,12 @@ export default function Profile() {
   }
 
   return (
+    // <div> mai kar satka hu</div>
     <div className="flex min-h-screen w-full bg-admin-pattern">
       <Sidebar />
       <div className="flex-1 ml-16 md:ml-64 transition-all duration-300">
-        {/*  */}
-        <ProfileHeader profile={profile} onEditProfile={() => setIsEditOpen(true)} />
+        {profile && <ProfileHeader profile={profile} onEditProfile={() => setIsEditOpen(true)} />}
 
-        {/* Tabs Section */}
         <div className="max-w-6xl mx-auto mt-8">
           <div className="bg-containerwhite rounded-t-2xl shadow-lg sticky top-0 z-10">
             <div className="flex border-b border-purple-100">
@@ -100,7 +102,6 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Content */}
           <div className="bg-containerwhite rounded-b-2xl shadow-lg">
             {activeTab === 'posts' && (
               <div className="divide-y divide-purple-100">
@@ -117,7 +118,7 @@ export default function Profile() {
                     <article key={post.id} className="p-6 hover:bg-purple-50/50 transition-colors">
                       <div className="flex gap-4">
                         <img
-                          src={profile.avatar}
+                          src={profile.image}
                           alt={profile.name}
                           className="w-12 h-12 rounded-full object-cover border border-purple-200"
                         />
@@ -129,10 +130,10 @@ export default function Profile() {
                             <span className="text-gray-500 text-sm">{post.timestamp}</span>
                           </div>
                           <p className="text-gray-800 leading-relaxed mb-3">{post.content}</p>
-                          {post.images.length > 0 && (
+                          {post.image && (
                             <div className="mb-3 rounded-xl overflow-hidden">
                               <img
-                                src={post.images[0]}
+                                src={post.image}
                                 alt="Post image"
                                 className="w-full max-h-80 object-cover"
                               />
@@ -141,7 +142,7 @@ export default function Profile() {
                           <div className="flex items-center gap-8 text-gray-500 text-sm">
                             <button className="flex items-center gap-2 hover:text-purple-600 transition-colors">
                               <span>💬</span>
-                              <span>{post.replies}</span>
+                              <span>{post.comments.length}</span>
                             </button>
                             <button className="flex items-center gap-2 hover:text-green-600 transition-colors">
                               <span>🔄</span>
@@ -149,7 +150,7 @@ export default function Profile() {
                             </button>
                             <button className="flex	items-center gap-2 hover:text-red-600 transition-colors">
                               <span>❤️</span>
-                              <span>{post.likes}</span>
+                              <span>{post.likes.length}</span>
                             </button>
                           </div>
                         </div>
@@ -170,6 +171,15 @@ export default function Profile() {
             )}
           </div>
         </div>
+        {profile && <EditProfileModal
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+          profile={profile}
+          onSave={async (fields, avatarFile, bannerFile) => {
+          await editProfile(fields, avatarFile, bannerFile);
+          fetchProfile();          // refresh with updated data
+        }}
+        />}
 
         {/* Bottom spacing */}
         <div className="h-8"></div>
