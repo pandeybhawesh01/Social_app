@@ -9,8 +9,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const Sidebar = ({isOpen,setIsOpen}) => {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const menuItems = [

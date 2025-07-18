@@ -15,6 +15,7 @@ function PostsList() {
   const [posts, setPosts] = useState([]);
   const [commenttext, setCommenttext] = useState("");
   const [expandedContentPostId, setExpandedContentPostId] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     getPosts();
@@ -106,9 +107,11 @@ function PostsList() {
   };
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 min-h-screen bg-admin-pattern py-10 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen w-full">
+      <div className='flex'>
+      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}/>
+      </div>
+      <div className="flex-1 min-h-screen bg-admin-pattern py-10 px-4 sm:px-6 lg:px-8" style={{ marginLeft: isOpen? '16rem' : '4rem' }}>
         <div className="text-center mb-16">
           <h1
             className="text-5xl sm:text-6xl font-extrabold leading-tight sm:leading-[1.2] animate-pop text-transparent bg-clip-text inline-block"
@@ -126,12 +129,12 @@ function PostsList() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 px-32">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 px-16 ">
           {[
             { label: 'Active Students', value: '12.5K' },
             { label: 'Universities', value: '150+' },
             { label: 'Posts Today', value: '2.3K' },
-            { label: 'Connections Made', value: '45K' },
+            { label: 'Connections', value: '45K' },
           ].map((stat, idx) => (
             <div
               key={idx}
