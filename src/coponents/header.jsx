@@ -15,7 +15,7 @@ const navigate = useNavigate();
         <p className='mb-8 max-w-md'></p>
         <button 
         className='border-2 border-bordergray rounded-full px-8 py-2 text-whitetext bg-blue-green hover:bg-blue-green-hover'
-        onClick={() => {navigate('/dashboard')}}>Get Started</button>
+        onClick={() => {navigate('/login')}}>Get Started</button>
     </div>
   )
 }

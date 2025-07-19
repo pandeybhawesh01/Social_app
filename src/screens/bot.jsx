@@ -27,7 +27,7 @@ const Bot = () => {
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [newChatName, setNewChatName] = useState('');
     const [showChatInput, setShowChatInput] = useState(false);
-    const [searchItem,setSearchItem]= useState('');
+    const [searchItem, setSearchItem] = useState('');
     const [showSearchInput, setShowSearchInput] = useState(false);
     const fileInputRef = useRef(null);
     const messagesEndRef = useRef(null);
@@ -119,7 +119,7 @@ const Bot = () => {
             if (data.success) {
                 setNewChatName('');
                 setShowChatInput(false);
-                await getChats(); 
+                await getChats();
             } else {
                 alert(data.message);
             }
@@ -147,17 +147,17 @@ const Bot = () => {
         }
     };
     const deleteChat = async (name) => {
-        try{
-            const {data} = await axios.delete(`${backendUrl}/api/bot/deleteChat`, {params: { name }});
-            if(data.success){
+        try {
+            const { data } = await axios.delete(`${backendUrl}/api/bot/deleteChat`, { params: { name } });
+            if (data.success) {
                 alert(data.message);
                 getChats();
             }
-            else{
+            else {
                 alert(data.message);
             }
         }
-        catch(error){
+        catch (error) {
             console.error('Error deleting chat:', error);
             alert('Failed to delete chat. Please try again.');
         }
@@ -170,180 +170,185 @@ const Bot = () => {
     return (
         <div className='flex flex-row h-screen'>
             {/* Sidebar */}
-            
-            <div className='w-[20%] bg-blue-green text-whitetext  flex-col p-8 gap-4  hidden sm:block'>
-                <div className='flex flex-col gap-0 mb-2'>
+
+            <div className="w-[20%] bg-blue-green text-whitetext p-6 hidden sm:flex flex-col gap-4">
+                {/* New Chat Section */}
+                <div>
                     <div
-                        className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
+                        className="flex items-center justify-between cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200"
                         onClick={() => setShowChatInput(!showChatInput)}
                     >
-                        <EditNoteIcon fontSize="large" />
-                        <h2 className='text-lg font-semibold'>New chat</h2>
+                        <div className="flex items-center gap-2">
+                            <EditNoteIcon fontSize="medium" />
+                            <h2 className="text-base font-semibold">New Chat</h2>
+                        </div>
                     </div>
-
                     {showChatInput && (
-                        <div className="flex flex-col gap-2 p-2">
+                        <div className="mt-2">
                             <input
                                 type="text"
                                 placeholder="Enter chat name"
                                 value={newChatName}
                                 onChange={(e) => setNewChatName(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        addChats();
-                                    }
-                                }}
-                                className="p-2 rounded bg-white text-black text-sm outline-none"
+                                onKeyDown={(e) => e.key === 'Enter' && addChats()}
+                                className="w-full p-2 rounded bg-white text-black text-sm outline-none"
                             />
                         </div>
-
                     )}
+                </div>
 
-                    <div >
-                        <div
-                        className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
+                {/* Search Section */}
+                <div>
+                    <div
+                        className="flex items-center justify-between cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200"
                         onClick={() => setShowSearchInput(!showSearchInput)}
                     >
-                        <SearchOutlinedIcon fontSize="large" />
-                        <h2 className='text-lg font-semibold'>Search chats</h2>
+                        <div className="flex items-center gap-2">
+                            <SearchOutlinedIcon fontSize="medium" />
+                            <h2 className="text-base font-semibold">Search</h2>
                         </div>
-                        {showSearchInput && (
-                        <div className="flex flex-col gap-2 pt-2">
+                    </div>
+                    {showSearchInput && (
+                        <div className="mt-2">
                             <input
                                 type="text"
                                 placeholder="Enter chat name"
                                 value={searchItem}
                                 onChange={(e) => setSearchItem(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-
-                                    }
-                                }}
-                                className="p-2 rounded bg-white text-black text-sm outline-none"
+                                className="w-full p-2 rounded bg-white text-black text-sm outline-none"
                             />
                         </div>
-                        
-
                     )}
-                    
-                    </div>
                 </div>
 
-                <div className='flex flex-col gap-0 mb-8'>
-                    <div className='flex items-center gap-2 p-2'>
-                        <ChatOutlinedIcon fontSize="large" />
-                        <h2 className='text-lg font-semibold'>Chats</h2>
+                {/* Divider */}
+                <div className="border-t border-white/30 my-2"></div>
+
+                {/* Chat List Section */}
+                <div className="flex flex-col gap-2 overflow-y-auto">
+                    <div className="flex items-center gap-2">
+                        <ChatOutlinedIcon fontSize="medium" />
+                        <h2 className="text-base font-semibold">Chats</h2>
                     </div>
-                    {chat.filter((chatItem) =>
-    chatItem.name.toLowerCase().includes(searchItem.toLowerCase())
-  ).map((chatItem, index) => (
-                        <div
-                            key={chatItem._id}
-                            onClick={() => onClickChat(index)}
-                            className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
-                        >
-                            <div className='flex items-center justify-between w-full'>
-                            <h2 className='text-base font-medium'>{chatItem.name}</h2>
-                            <DeleteForeverRoundedIcon onClick={()=> deleteChat(chatItem.name)}
-                                className=' cursor-pointer hover:text-red-700'/>
+
+                    {chat.length === 0 ? (
+                        <p className="text-sm text-gray-300 mt-2">No chats yet.</p>
+                    ) : (
+                        chat
+                            .filter((c) => c.name.toLowerCase().includes(searchItem.toLowerCase()))
+                            .map((chatItem, index) => (
+                                <div
+                                    key={chatItem._id}
+                                    onClick={() => onClickChat(index)}
+                                    className="flex items-center justify-between p-2 rounded-lg hover:bg-blue-green-hover cursor-pointer transition-all duration-200"
+                                >
+                                    <span className="text-sm">{chatItem.name}</span>
+                                    <DeleteForeverRoundedIcon
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteChat(chatItem.name);
+                                        }}
+                                        className="text-red-400 hover:text-red-600"
+                                    />
                                 </div>
-                        </div>
-                    ))}
+                            ))
+                    )}
                 </div>
             </div>
+
             {showSidebar && (
-  <div className="fixed inset-0 z-40 bg-blue-green w-[60%] text-whitetext p-8 flex flex-col gap-4 sm:hidden transition-transform">
-    <div className="flex justify-end">
-      <button onClick={() =>setShowSidebar(false)} className="text-white text-xl font-bold">×</button>
-    </div>
-   <div className='w-full bg-blue-green text-whitetext  flex-col  gap-4  flex'>
-                <div className='flex flex-col gap-0 mb-2'>
-                    <div
-                        className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
-                        onClick={() => setShowChatInput(!showChatInput)}
-                    >
-                        <EditNoteIcon fontSize="large" />
-                        <h2 className='text-lg font-semibold'>New chat</h2>
+                <div className="fixed inset-0 z-40 bg-blue-green w-[60%] text-whitetext p-8 flex flex-col gap-4 sm:hidden transition-transform">
+                    <div className="flex justify-end">
+                        <button onClick={() => setShowSidebar(false)} className="text-white text-xl font-bold">×</button>
                     </div>
+                    <div className='w-full bg-blue-green text-whitetext  flex-col  gap-4  flex'>
+                        <div className='flex flex-col gap-0 mb-2'>
+                            <div
+                                className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
+                                onClick={() => setShowChatInput(!showChatInput)}
+                            >
+                                <EditNoteIcon fontSize="large" />
+                                <h2 className='text-lg font-semibold'>New chat</h2>
+                            </div>
 
-                    {showChatInput && (
-                        <div className="flex flex-col gap-2 p-2">
-                            <input
-                                type="text"
-                                placeholder="Enter chat name"
-                                value={newChatName}
-                                onChange={(e) => setNewChatName(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        addChats();
-                                    }
-                                }}
-                                className="p-2 rounded bg-white text-black text-sm outline-none"
-                            />
-                        </div>
-
-                    )}
-
-                    <div >
-                        <div
-                        className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
-                        onClick={() => setShowSearchInput(!showSearchInput)}
-                    >
-                        <SearchOutlinedIcon fontSize="large" />
-                        <h2 className='text-lg font-semibold'>Search chats</h2>
-                        </div>
-                        {showSearchInput && (
-                        <div className="flex flex-col gap-2 pt-2">
-                            <input
-                                type="text"
-                                placeholder="Enter chat name"
-                                value={searchItem}
-                                onChange={(e) => setSearchItem(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-
-                                    }
-                                }}
-                                className="p-2 rounded bg-white text-black text-sm outline-none"
-                            />
-                        </div>
-                        
-
-                    )}
-                    
-                    </div>
-                </div>
-
-                <div className='flex flex-col gap-0 mb-8'>
-                    <div className='flex items-center gap-2 p-2'>
-                        <ChatOutlinedIcon fontSize="large" />
-                        <h2 className='text-lg font-semibold'>Chats</h2>
-                    </div>
-                    {chat.filter((chatItem) =>
-    chatItem.name.toLowerCase().includes(searchItem.toLowerCase())
-  ).map((chatItem, index) => (
-                        <div
-                            key={chatItem._id}
-                            onClick={() => onClickChat(index)}
-                            className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
-                        >
-                            <div className='flex items-center justify-between w-full'>
-                            <h2 className='text-base font-medium'>{chatItem.name}</h2>
-                            <DeleteForeverRoundedIcon onClick={()=> deleteChat(chatItem.name)}
-                                className=' cursor-pointer hover:text-red-700'/>
+                            {showChatInput && (
+                                <div className="flex flex-col gap-2 p-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Enter chat name"
+                                        value={newChatName}
+                                        onChange={(e) => setNewChatName(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                addChats();
+                                            }
+                                        }}
+                                        className="p-2 rounded bg-white text-black text-sm outline-none"
+                                    />
                                 </div>
+
+                            )}
+
+                            <div >
+                                <div
+                                    className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
+                                    onClick={() => setShowSearchInput(!showSearchInput)}
+                                >
+                                    <SearchOutlinedIcon fontSize="large" />
+                                    <h2 className='text-lg font-semibold'>Search chats</h2>
+                                </div>
+                                {showSearchInput && (
+                                    <div className="flex flex-col gap-2 pt-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Enter chat name"
+                                            value={searchItem}
+                                            onChange={(e) => setSearchItem(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+
+                                                }
+                                            }}
+                                            className="p-2 rounded bg-white text-black text-sm outline-none"
+                                        />
+                                    </div>
+
+
+                                )}
+
+                            </div>
                         </div>
-                    ))}
+
+                        <div className='flex flex-col gap-0 mb-8'>
+                            <div className='flex items-center gap-2 p-2'>
+                                <ChatOutlinedIcon fontSize="large" />
+                                <h2 className='text-lg font-semibold'>Chats</h2>
+                            </div>
+                            {chat.filter((chatItem) =>
+                                chatItem.name.toLowerCase().includes(searchItem.toLowerCase())
+                            ).map((chatItem, index) => (
+                                <div
+                                    key={chatItem._id}
+                                    onClick={() => onClickChat(index)}
+                                    className='flex items-center gap-2 cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200'
+                                >
+                                    <div className='flex items-center justify-between w-full'>
+                                        <h2 className='text-base font-medium'>{chatItem.name}</h2>
+                                        <DeleteForeverRoundedIcon onClick={() => deleteChat(chatItem.name)}
+                                            className=' cursor-pointer hover:text-red-700' />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
-  </div>
-)}
+            )}
 
             {/* Chat Screen */}
             <div className="w-[100%] relative min-h-screen bg-admin-pattern text-gray flex flex-col justify-between sm-w[80%] md:w-[80%]">
                 <div className="sm:hidden fixed top-4 left-4 z-50  p-2 rounded shadow-lg">
-  <MenuRoundedIcon onClick={() => setShowSidebar(!showSidebar)} className="cursor-pointer text-blue-green" />
-</div>
+                    <MenuRoundedIcon onClick={() => setShowSidebar(!showSidebar)} className="cursor-pointer text-blue-green" />
+                </div>
 
                 {chatHistory.length === 0 ? (
                     <div className="flex-1 flex justify-center items-center flex-col">
@@ -403,7 +408,7 @@ const Bot = () => {
                         onChange={handleInputChange}
                         onKeyDown={(e) => e.key === 'Enter' && getresponse(message)}
                         disableUnderline
-                        className="!text-gray !bg-whitebg !border !border-bordergray !rounded-xl w-full px-4 py-1"
+                        className="!text-gray !bg-whitebg border border-bordergray !rounded-xl w-full px-4 py-1"
                         placeholder="Type a message"
                         fullWidth
                         endAdornment={

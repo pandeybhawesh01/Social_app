@@ -24,26 +24,7 @@ const mockProfile = {
   joinedDate: 'Jul 2025',
 };
 
-const mockPosts = [
-  {
-    id: 1,
-    content: "Just finished my Data Structures assignment! The feeling of solving complex algorithms is unmatched. 🔥",
-    timestamp: '2h ago',
-    likes: 24,
-    retweets: 5,
-    replies: 8,
-    images: []
-  },
-  {
-    id: 2,
-    content: "Campus life at BIT Mesra is amazing! The tech fest preparations are in full swing. Can't wait to showcase our projects! #TechFest2025",
-    timestamp: '5h ago',
-    likes: 45,
-    retweets: 12,
-    replies: 15,
-    images: ['https://via.placeholder.com/400x300/7C3AED/FFFFFF?text=Tech+Fest']
-  }
-];
+
 
 export default function Profile() {
   // const [profile] = useState(mockProfile);
@@ -51,6 +32,7 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState('posts');
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { profile, posts, loading, error, fetchProfile, fetchPosts,editProfile } = useProfileViewModel();
+  const [isOpen,setIsOpen]= useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -80,8 +62,8 @@ export default function Profile() {
   return (
     // <div> mai kar satka hu</div>
     <div className="flex min-h-screen w-full bg-admin-pattern">
-      <Sidebar />
-      <div className="flex-1 ml-16 md:ml-64 transition-all duration-300">
+      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}/>
+      <div className={`flex-1 ${isOpen? 'ml-64' : 'ml-16'} transition-all duration-300`}>
         {profile && <ProfileHeader profile={profile} onEditProfile={() => setIsEditOpen(true)} />}
 
         <div className="max-w-6xl mx-auto mt-8">

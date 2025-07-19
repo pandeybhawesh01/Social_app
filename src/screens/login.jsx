@@ -14,7 +14,7 @@ function Login() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [state, setState] = useState('Sign Up');
+  const [state, setState] = useState('Login');
 
   // loading state drives both spinner and disabling
   const [loading, setLoading] = useState(false);
