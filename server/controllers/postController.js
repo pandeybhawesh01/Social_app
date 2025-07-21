@@ -28,31 +28,31 @@ export const createPost = async (req, res) => {
         if (!user.isAccountVerified) {
             return res.json({ success: false, message: "You need to get verified to create posts" })
         }
-        const {content,college,type} = req.body;
+        const {content,college,type, image} = req.body;
         if (!user) {
             return res.json({ success: false, message: "user not found" })
         }
-        let imageUrl = ''
+        // let imageUrl = ''
 
-        if (req.files && req.files.image) {
-            const file = req.files.image;
-            if (!file.mimetype || !file.mimetype.startsWith('image/')) {
-                return res.json({ success: false, message: 'Please upload a valid image file (e.g., JPEG, PNG)' });
-            }
-            try {
-                const result = await uploadToCloudinary(file.tempFilePath, {
-                    folder: 'Users',
-                });
-                imageUrl = result.url;
-            }
-            catch (uploadError) {
-                return res.json({ success: false, message: uploadError });
-            }
+        // if (req.files && req.files.image) {
+        //     const file = req.files.image;
+        //     if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+        //         return res.json({ success: false, message: 'Please upload a valid image file (e.g., JPEG, PNG)' });
+        //     }
+        //     try {
+        //         const result = await uploadToCloudinary(file.tempFilePath, {
+        //             folder: 'Users',
+        //         });
+        //         imageUrl = result.url;
+        //     }
+        //     catch (uploadError) {
+        //         return res.json({ success: false, message: uploadError });
+        //     }
 
-        }
+        // }
         const userInfo = { username: user.name, email: user.email, profilePic: user.image };
         const newPost = {
-            image:imageUrl,
+            image,
             content,
             college,
             type,
@@ -60,6 +60,8 @@ export const createPost = async (req, res) => {
             likes: [],
             comments: []
         };
+
+        console.log("new post is ",newPost)
         let post = await postModel.findOne({ "owner.email": user.email });
         if (!post) {
             post = await new postModel({

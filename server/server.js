@@ -14,10 +14,19 @@ const port= process.env.PORT|| 4000;
 const allowedOrigins=['http://localhost:5173']
 
 connectDB();
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
+}));
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin: allowedOrigins,credentials:true}))//controls which domains can access the server
+app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload({
     useTempFiles:true,
     tempFileDir: './tmp'
