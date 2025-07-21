@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -23,6 +24,8 @@ app.use(cors({
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
 }));
+
+// app.options('*', cors());
 
 app.use(express.json());
 app.use(cookieParser());
