@@ -20,6 +20,20 @@ export const getPosts = async (req, res) => {
         return res.json({ success: false, message: err.message })
     }
 }
+export const getPostByEmail = async(req,res)=>{
+    try{
+    const {email} = req.params;
+    const posts = await postModel.findOne({"owner.email":email});
+    if(!posts)
+    {
+        return res.json({success:false,message:"user has no posts"});
+    }
+    return res.json({success:true,data:posts});
+}
+catch(err){
+    return res.json({success:false, message:err.message});
+}
+}
 
 export const createPost = async (req, res) => {
     try {
