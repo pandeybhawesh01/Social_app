@@ -3,6 +3,7 @@ import Sidebar from '../coponents/sidebar';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../contex/AppContex';
+import { uploadImageFrontend, urlFor } from '../lib/cloudinary';
 
 const collegeList = [
   "IIT Bombay", "IIT Delhi", "IIT Kanpur", "IIT Kharagpur", "IIT Madras",
@@ -14,15 +15,17 @@ const collegeList = [
 
 
 function Post() {
-   const { userData, backendUrl } = useContext(AppContext);
+  const { userData, backendUrl } = useContext(AppContext);
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState("");
   const [caption, setCaption] = useState("");
   const [postType, setPostType] = useState("");
   const [otherType, setOtherType] = useState("");
   const [college, setCollege] = useState("");
-  const [isOpen,setIsOpen]= useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,49 +33,62 @@ function Post() {
     navigate('/dashboard');
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
       setPreview(URL.createObjectURL(selectedFile));
     }
+    if (!selectedFile) return;
+    setUploading(true);
+    try {
+      const { secure_url, public_id } = await uploadImageFrontend(selectedFile);
+      setImageUrl(secure_url);
+      console.log("Uploaded to Cloudinary:", public_id);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setUploading(false);
+    }
   };
+  console.log('iamge url',imageUrl)
+
+
 
   const createPost = async (e) => {
-  e.preventDefault(); // prevent form reload if used in a form
-  try {
-    const formData = new FormData();
-    formData.append('content', caption); // corresponds to req.body.content
-    formData.append('type', postType === 'others' ? otherType : postType);
-    formData.append('college', college);
+    e.preventDefault(); // prevent form reload if used in a form
+    try {
+      const formData = new FormData();
+      formData.append('content', caption); // corresponds to req.body.content
+      formData.append('type', postType === 'others' ? otherType : postType);
+      formData.append('college', college);
+      formData.append('image', imageUrl);
 
-    if (file) {
-      formData.append('image', file); // for req.files.image
+      console.log("the data that is being uploaded ", formData);
+
+      const { data } = await axios.post(`${backendUrl}/api/post/createPost`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (data.success) {
+        alert('Post created successfully');
+        navigate('/dashboard');
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      alert('Something went wrong while creating post');
+      console.log(err);
     }
-
-    const { data } = await axios.post(`${backendUrl}/api/post/createPost`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    if (data.success) {
-      alert('Post created successfully');
-      navigate('/dashboard');
-    } else {
-      alert(data.message);
-    }
-  } catch (err) {
-    alert('Something went wrong while creating post');
-    console.log(err);
-  }
-};
+  };
 
 
   return (
     <div className="min-h-screen bg-admin-pattern bg-fixed">
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}/>
-      <div className={`${isOpen ? 'ml-64' :'ml-16'} p-8 rounded-lg shadow-lg transition-all duration-300`}>
+      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+      <div className={`${isOpen ? 'ml-64' : 'ml-16'} p-8 rounded-lg shadow-lg transition-all duration-300`}>
         <h2 className="text-center text-xl font-semibold text-gray border-b pb-2">
           Create a Post
         </h2>

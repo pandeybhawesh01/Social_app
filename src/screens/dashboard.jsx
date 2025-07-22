@@ -571,7 +571,7 @@ function PostsList() {
                 <button onClick={() => likePost(post.post._id, post._id)}
                   className="flex items-center space-x-1 px-2 py-1 rounded-full transition-all duration-300 hover:bg-grayhover" style={{ color: 'var(--bg-blue-green)' }}
                 >
-                  {post.post.likes.some(like => like.email === userData.email) ? (<FavoriteSharpIcon />) : (<FavoriteBorderOutlinedIcon />)}
+                  {post.post.likes.some(like => like.email === userData?.email) ? (<FavoriteSharpIcon />) : (<FavoriteBorderOutlinedIcon />)}
 
                   <span>{post.post.likes.length}</span>
                 </button>
