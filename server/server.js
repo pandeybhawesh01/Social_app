@@ -17,7 +17,11 @@ connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin: allowedOrigins,credentials:true}))//controls which domains can access the server
+app.use(cors({
+  origin: '*', 
+  credentials: true
+}));
+
 app.use(fileUpload({
     useTempFiles:true,
     tempFileDir: './tmp'
