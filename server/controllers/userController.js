@@ -1,5 +1,5 @@
 import userModel from "../models/userModel.js";
-import { uploadToCloudinary } from "../config/cloudinary.js";
+// import { uploadToCloudinary } from "../config/cloudinary.js";
 export const getUserData = async(req,res)=>{
     try{
         const {userId} =req;
@@ -57,6 +57,8 @@ export const updateUser = async (req, res) => {
       bio,
       website,
       location,
+      banner,
+      image,
     } = req.body;
 
     const user = await userModel.findById(userId);
@@ -68,34 +70,36 @@ export const updateUser = async (req, res) => {
     if (bio != null)      user.bio      = bio;
     if (website != null)  user.website  = website;
     if (location != null) user.location = location;
+    if (image != null)    user.image    = image;
+    if (banner != null)   user.banner   = banner;
 
-    if (req.files && req.files.image) {
-      const file = req.files.image;
-      if (!file.mimetype.startsWith("image/")) {
-        return res.json({
-          success: false,
-          message: "Please upload a valid image for avatar",
-        });
-      }
-      const result = await uploadToCloudinary(file.tempFilePath, {
-        folder: "Users/Avatars",
-      });
-      user.image = result.url;
-    }
+    // if (req.files && req.files.image) {
+    //   const file = req.files.image;
+    //   if (!file.mimetype.startsWith("image/")) {
+    //     return res.json({
+    //       success: false,
+    //       message: "Please upload a valid image for avatar",
+    //     });
+    //   }
+    //   const result = await uploadToCloudinary(file.tempFilePath, {
+    //     folder: "Users/Avatars",
+    //   });
+    //   user.image = result.url;
+    // }
 
-    if (req.files && req.files.banner) {
-      const file = req.files.banner;
-      if (!file.mimetype.startsWith("image/")) {
-        return res.json({
-          success: false,
-          message: "Please upload a valid image for banner",
-        });
-      }
-      const result = await uploadToCloudinary(file.tempFilePath, {
-        folder: "Users/Banners",
-      });
-      user.banner = result.url;
-    }
+    // if (req.files && req.files.banner) {
+    //   const file = req.files.banner;
+    //   if (!file.mimetype.startsWith("image/")) {
+    //     return res.json({
+    //       success: false,
+    //       message: "Please upload a valid image for banner",
+    //     });
+    //   }
+    //   const result = await uploadToCloudinary(file.tempFilePath, {
+    //     folder: "Users/Banners",
+    //   });
+    //   user.banner = result.url;
+    // }
 
     await user.save();
     return res.json({

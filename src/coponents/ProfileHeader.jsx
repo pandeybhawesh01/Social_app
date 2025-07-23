@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 
 export default function ProfileHeader({ profile, onEditProfile }) {
     const fmt = (n) => (n >= 1000 ? (n / 1000).toFixed(1) + 'K' : n);
+    console.log('profile data in the profile header', profile);
     const profileData = {
         userName : profile.name,
         email : profile.email,

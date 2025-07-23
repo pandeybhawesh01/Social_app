@@ -38,11 +38,7 @@ export default function Profile() {
     fetchProfile();
     fetchPosts();
   }, []);  
-  const handleSaveProfile = (upd) => {
-
-  };
-  console.log("profile", profile);
-  console.log("posgts ", posts);
+  console.log("profile in prodile file ", profile);
   if(loading){
     return(
       <div>
@@ -50,7 +46,6 @@ export default function Profile() {
       </div>
     )
   }
-  console.log("error",error)
   if(error){
     return(
       <div>
@@ -157,8 +152,8 @@ export default function Profile() {
           isOpen={isEditOpen}
           onClose={() => setIsEditOpen(false)}
           profile={profile}
-          onSave={async (fields, avatarFile, bannerFile) => {
-          await editProfile(fields, avatarFile, bannerFile);
+          onSave={async (fields) => {
+          await editProfile(fields);
           fetchProfile();          // refresh with updated data
         }}
         />}

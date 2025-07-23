@@ -5,6 +5,7 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Camera, Upload } from 'lucide-react';
+import { uploadImageFrontend } from '../lib/cloudinary';
 
 export default function EditProfileModal({ isOpen, onClose, profile, onSave }) {
   const [avatarFile, setAvatarFile] = useState(null);
@@ -40,36 +41,56 @@ export default function EditProfileModal({ isOpen, onClose, profile, onSave }) {
     setFormData(fd => ({ ...fd, [key]: e.target.value }));
 
   const onFileSelect = type => e => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-    // preview
-    const reader = new FileReader();
-    reader.onload = ev => {
-      setPreviews(prev => ({ ...prev, [type]: ev.target.result }));
-    };
-    reader.readAsDataURL(file);
+  // create the FileReader
+  const reader = new FileReader();
 
-    // store raw
-    if (type === 'avatar') setAvatarFile(file);
-    else setBannerFile(file);
+  // once loaded, update preview
+  reader.addEventListener('load', evt => {
+    setPreviews(prev => ({ ...prev, [type]: evt.target.result }));
+  }, { once: true });
+
+  // kick off the read
+  reader.readAsDataURL(file);
+
+  // store the raw file object
+  if (type === 'avatar') setAvatarFile(file);
+  else                    setBannerFile(file);
+};
+
+  const trigger = type => {
+    if (type==='avatar') avatarRef.current.click();
+    else                 bannerRef.current.click();
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     // call parent onSave with fields + raw files
-    await onSave(
-      { ...formData },
-      avatarFile,
-      bannerFile
-    );
+        let avatarUrl = profile.image;
+    let bannerUrl = profile.banner;
+
+    if (avatarFile) {
+      const { secure_url } = await uploadImageFrontend(avatarFile);
+      avatarUrl = secure_url;
+    }
+    if (bannerFile) {
+      const { secure_url } = await uploadImageFrontend(bannerFile);
+      bannerUrl = secure_url;
+    }
+    await onSave({
+      ...formData,
+      image :  avatarUrl,
+      banner: bannerUrl,
+    });
     onClose();
   };
 
-  const trigger = type => {
-    if (type === 'avatar') avatarRef.current.click();
-    else bannerRef.current.click();
-  };
+  // const trigger = type => {
+  //   if (type === 'avatar') avatarRef.current.click();
+  //   else bannerRef.current.click();
+  // };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

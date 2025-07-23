@@ -62,7 +62,6 @@ const useProfileViewModel = () => {
     setError(null);
     try {
       const res = await profileService.fetchUserPosts();
-      console.log("res in view model ", res);
       if (res.data.success) {
         const fetched = res.data.data.posts || [];
         setPosts(Array.isArray(fetched) ? fetched : []);
@@ -82,6 +81,7 @@ const useProfileViewModel = () => {
       setLoading(false);
     }
   };
+
   const fetchPostsByEmail= async(email)=>{
     setLoading(true);
     setError(null);
@@ -110,18 +110,8 @@ const useProfileViewModel = () => {
   const editProfile = async (fields, avatarFile, bannerFile) => {
     setLoading(true); setError(null);
     try {
-      let payload = fields;
-      // if either file is present, build FormData
-      if (avatarFile || bannerFile) {
-        const form = new FormData();
-        Object.entries(fields).forEach(([k, v]) => {
-          if (v != null) form.append(k, v);
-        });
-        if (avatarFile) form.append('image', avatarFile);
-        if (bannerFile) form.append('banner', bannerFile);
-        payload = form;
-      }
-      const res = await profileService.updateProfile(payload);
+      const res = profileService.updateProfile(fields);
+      console.log("response is ", res);
       if (res.data.success) {
         setProfile(res.data.userData);
         return res.data.userData;
@@ -129,8 +119,7 @@ const useProfileViewModel = () => {
         throw new Error(res.data.message);
       }
     } catch (err) {
-      const msg = err.response?.data?.message || err.message;
-      setError(msg);
+      setError(err.response?.data?.message || err.message);
       return null;
     } finally {
       setLoading(false);
