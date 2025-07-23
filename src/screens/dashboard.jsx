@@ -351,25 +351,51 @@ import { AppContext } from '../contex/AppContex';
 import axios from 'axios';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import FavoriteSharpIcon from '@mui/icons-material/FavoriteSharp';
+import Navbar from '../coponents/navbar';
+import { useNavigate, useNavigation } from 'react-router-dom';
 
 function PostsList() {
   const { userData, backendUrl } = useContext(AppContext);
   const [expandedPostId, setExpandedPostId] = useState(null);
   const [expandedPostUserId, setExpandedPostUserId] = useState(null);
-  const [posts, setPosts] = useState([]);
+ const [posts, setPosts] = useState([]);
+const [page, setPage] = useState(1);
+const [hasMore, setHasMore] = useState(true);
+const [loading, setLoading] = useState(false);
+
   const [commenttext, setCommenttext] = useState("");
   const [expandedContentPostId, setExpandedContentPostId] = useState(null);
-  const [isOpen,setIsOpen]= useState(null);
+  const [isOpen, setIsOpen] = useState(null);
+  const [likedPost_id, setlikedPostId] = useState([]);
+  const navigation = useNavigate();
 
   useEffect(() => {
-    getPosts();
-  }, []);
+  getPosts(); 
+}, []);
+
+   useEffect(() => {
+  const handleScroll = () => {
+    if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 &&
+      hasMore &&
+      !loading
+    ) {
+      getPosts();
+    }
+  };
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, [hasMore, loading]);
 
   const getPosts = async () => {
+    setLoading(true);
     try {
-      const { data } = await axios.post(`${backendUrl}/api/post/allUsersPosts`);
+      const { data } = await axios.get(`${backendUrl}/api/post/allUsersPosts?page=${page}&limit=10`);
       if (data.success) {
-        setPosts(data.posts);
+        console.log(data);
+        setPosts(prev=>[...prev,...data.posts])
+        setHasMore(data.hasMore)
+        setPage(prev=>(prev+1))
         console.log(data.posts);
       }
       else {
@@ -380,7 +406,12 @@ function PostsList() {
       alert("error gtting all the posts");
       console.log(err)
     }
+    finally{
+      setLoading(false);
+    }
   }
+ 
+
   const comment = async (comment) => {
     console.log(expandedPostId, comment, posts._id
     );
@@ -402,6 +433,7 @@ function PostsList() {
   }
 
   const likePost = async (likePostId, likePostUserId) => {
+    setlikedPostId([...likedPost_id, likePostId])
     try {
       const { data } = await axios.post(`${backendUrl}/api/post/like-post/${likePostUserId}/${likePostId}`);
       if (data.success) {
@@ -415,6 +447,10 @@ function PostsList() {
       alert("error liking post");
       console.log(err);
     }
+
+  }
+  const onProfileClick =(email)=>{
+    navigation(`/post-profile/${email}`)
   }
 
   const toggleExpanded = (postId) => {
@@ -452,8 +488,9 @@ function PostsList() {
 
   return (
     <div className="flex">
-      <Sidebar setIsOpen={setIsOpen} isOpen={isOpen}/>
-      <div className={`flex-1 min-h-screen bg-admin-pattern py-10 px-4 sm:px-6 lg:px-8 ${isOpen? 'ml-64':'ml-16'} transition-all duration-300`} >
+      <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} />
+      <Navbar/>
+      <div className={`flex-1 min-h-screen bg-admin-pattern py-10 px-4 sm:px-6 lg:px-8 ${isOpen ? 'ml-64' : 'ml-16'} transition-all duration-300`} >
         <div className="text-center mb-16">
           <h1
             className="text-5xl sm:text-6xl font-extrabold leading-tight sm:leading-[1.2] animate-pop text-transparent bg-clip-text inline-block"
@@ -491,7 +528,7 @@ function PostsList() {
         </div>
 
         {/* Posts */}
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-2xl mx-auto space-y-8">
           {posts.map((post) => (
             <article
               key={post.post._id}
@@ -500,16 +537,17 @@ function PostsList() {
             >
               {/* Header */}
               <div className="flex items-center space-x-4 mb-4">
-                
+                <div onClick={() => onProfileClick(post.owner.email)}>
                 {post.owner.profilePic ? (
                   <div className='w-12 h-12 border-2 rounded-full border-[var(--hover-bg-grayhover)]'>
-                  <img src={post.owner.profilePic} alt={`${post.owner.username} avatar`} className="w-11 h-11 rounded-full object-cover" />
+                    <img src={post.owner.profilePic} alt={`${post.owner.username} avatar`} className="w-11 h-11 rounded-full object-cover" />
                   </div>) :
                   (<div className='w-12 h-12 border-2 rounded-full border-[var(--hover-bg-grayhover)] flex items-center justify-center'>
-                  <div className="w-9 h-9 rounded-full bg-blue-green flex items-center justify-center">
-                    <span className="text-white text-lg font-semibold">{post.owner.username.charAt(0).toUpperCase()}</span>
-                  </div>
+                    <div className="w-9 h-9 rounded-full bg-blue-green flex items-center justify-center">
+                      <span className="text-white text-lg font-semibold">{post.owner.username.charAt(0).toUpperCase()}</span>
+                    </div>
                   </div>)}
+                  </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-lg font-semibold text-gray truncate">{post.owner.username}</p>
                   <p className="text-sm text-lightgray truncate">{post.post.college}</p>
@@ -557,7 +595,7 @@ function PostsList() {
                   <img
                     src={post.post.image}
                     alt="Post visual"
-                    className="w-full object-cover max-h-80 mx-auto"
+                    className="w-full object-cover w-auto"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1e9f285e-5fa0-4bba-903b-5b99db8bffb7.png';
@@ -571,9 +609,20 @@ function PostsList() {
                 <button onClick={() => likePost(post.post._id, post._id)}
                   className="flex items-center space-x-1 px-2 py-1 rounded-full transition-all duration-300 hover:bg-grayhover" style={{ color: 'var(--bg-blue-green)' }}
                 >
-                  {post.post.likes.some(like => like.email === userData?.email) ? (<FavoriteSharpIcon />) : (<FavoriteBorderOutlinedIcon />)}
 
-                  <span>{post.post.likes.length}</span>
+                  {post.post.likes.some(like => like.email === userData?.email) ? (<FavoriteSharpIcon />) : (likedPost_id.some(id => id == post.post._id) ? (<FavoriteSharpIcon />) : (<FavoriteBorderOutlinedIcon />))}
+
+                  {/* <span>{post.post.likes.length +likecount}</span> */}
+                  <span>
+                    {
+                      post.post.likes.some(like => like.email === userData?.email)
+                        ? post.post.likes.length
+                        : (likedPost_id.some(id => id === post.post._id)
+                          ? post.post.likes.length + 1
+                          : post.post.likes.length)
+                    }
+                  </span>
+
                 </button>
 
                 <button
@@ -595,11 +644,16 @@ function PostsList() {
                 <div className="mt-6 space-y-4">
                   {/* Add Comment Input */}
                   <div className="flex items-cemter gap-3">
-                    <img
-                      src="https://i.pravatar.cc/100"
+                    {userData?.image ?
+                    (<img
+                      src={userData?.image}
                       alt="You"
                       className="w-10 h-10 rounded-full object-cover"
-                    />
+                    />):
+                    ( <div className="w-9 h-9 rounded-full bg-blue-green flex items-center justify-center">
+                      <span className="text-white text-lg font-semibold">{userData?.name.charAt(0).toUpperCase()}</span>
+                    </div>)
+}
                     <input
                       type="text"
                       placeholder="Write a comment..."
@@ -634,7 +688,7 @@ function PostsList() {
                                 className="w-10 h-10 rounded-full object-cover"
                               />
                             ) : (
-                              <div className="w-10 h-10 rounded-full bg-blue-green flex items-center justify-center">
+                              <div className="w-10 h-9 rounded-full bg-blue-green flex items-center justify-center">
                                 <span className="text-white text-lg font-semibold">
                                   {comment.user.username.charAt(0).toUpperCase()}
                                 </span>

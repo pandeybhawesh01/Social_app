@@ -95,7 +95,7 @@ export default function Profile() {
                     <article key={post.id} className="p-6 hover:bg-purple-50/50 transition-colors">
                       <div className="flex gap-4">
                         <img
-                          src={profile.image}
+                          src={profile?.image}
                           alt={profile.name}
                           className="w-12 h-12 rounded-full object-cover border border-purple-200"
                         />

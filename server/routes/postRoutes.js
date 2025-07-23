@@ -10,7 +10,7 @@ postRouter.delete("/delete-post/:postId", userAuth, deletePost);
 postRouter.put("/update-post/:postId", userAuth, updatePost);
 postRouter.post("/like-post/:userPostsId/:postId",userAuth,createLike);
 postRouter.post("/comment/:userPostsId/:postId", userAuth, createComment);
-postRouter.post("/allUsersPosts", userAuth, getAllPosts);
+postRouter.get("/allUsersPosts", userAuth, getAllPosts);
 postRouter.get("/postsbyemail/:email",getPostByEmail)
 
 

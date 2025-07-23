@@ -29,6 +29,33 @@ const useProfileViewModel = () => {
       setLoading(false);
     }
   };
+  const fetchProfileByEmail=async(email)=>{
+    setLoading(true);
+    setError(null);
+    try{
+      const res=await profileService.fetchUserProfileByEmail(email);
+      if(res.data.success)
+      {
+        setProfile(res.data.userData);
+        return res.data.userData
+      }
+      else{
+        throw new Error(res.data.message);
+      }
+    }
+    catch(err)
+    {
+      setError(
+        (err.response && err.response.data && err.response.data.message) ||
+          err.message ||
+          'Failed to load profile'
+      );
+      return null;
+    }
+    finally{
+      setLoading(false);
+    }
+  }
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -54,10 +81,34 @@ const useProfileViewModel = () => {
       setLoading(false);
     }
   };
-    const editProfile = async (fields) => {
+
+  const fetchPostsByEmail= async(email)=>{
     setLoading(true);
     setError(null);
-    console.log("filds to be updated ", fields)
+    try{
+      const res = await profileService.fetchUserPostsByEmail(email);
+         if (res.data.success) {
+        const fetched = res.data.data.posts || [];
+        setPosts(Array.isArray(fetched) ? fetched : []);
+        return fetched;
+      } else {
+        setPosts([]);
+        return [];
+      }
+    } catch (err) {
+      setError(
+        (err.response && err.response.data && err.response.data.message) ||
+          err.message ||
+          'Failed to load posts'
+      );
+      return null;
+    } finally {
+      setLoading(false);
+    }
+
+  }
+  const editProfile = async (fields, avatarFile, bannerFile) => {
+    setLoading(true); setError(null);
     try {
       const res = profileService.updateProfile(fields);
       console.log("response is ", res);
@@ -83,6 +134,8 @@ const useProfileViewModel = () => {
     fetchProfile,
     fetchPosts,
     editProfile,
+    fetchPostsByEmail,
+    fetchProfileByEmail
   };
 };
 

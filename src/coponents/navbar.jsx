@@ -44,11 +44,19 @@ function Navbar() {
   }
 
   return (
-    <div className='w-full flex justify-between itemns-center p-4 sm:px-24 absolute top-0'>
+    <div className='w-full flex justify-between itemns-center p-4 sm:px-12 absolute top-0'>
       <div className='w-28 sm:w-32'></div>
       {userData ?
-        <div className='w-8 h-8 flex justify-center items-center rounded-full bg-blue-green relative group text-white'>
-          {userData.name[0].toUpperCase()}
+        <div className='w-10 h-10 flex justify-center items-center rounded-full bg-blue-green relative group text-white font-bold'>
+          {userData.image?
+          (<img
+          src={userData.image}
+          alt="na"
+          className="w-10 h-10 rounded-full object-cover"
+          >
+          </img>)
+          :
+          (userData.name[0].toUpperCase())}
           <div className='absolute hidden group-hover:block top-0 right-0 z-10 pt-10'>
             <ul className='list-none m-0 p-2 bg-blue-green text-sm rounded'>
               {!userData.isAccountVerified  &&

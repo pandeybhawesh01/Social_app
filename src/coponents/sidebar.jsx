@@ -130,7 +130,7 @@ const Sidebar = ({isOpen,setIsOpen}) => {
 
     <div
       className={
-        `fixed top-0 left-0 h-screen bg-blue-green text-whitetext flex flex-col shadow-2xl transition-all duration-300 ` +
+        `fixed top-0 left-0 h-screen bg-blue-green text-whitetext flex flex-col shadow-2xl transition-all duration-300 z-20 ` +
         (isOpen ? 'w-64 p-4' : 'w-16 p-2')
       }
     >

@@ -9,6 +9,7 @@ import AdminList from './screens/adminList'
 import EmailVerify from './screens/emailVerify'
 import ResetPassword from './screens/resetPassword'
 import Profile from './screens/Profile'
+import PostProfile from './screens/postProfile'
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/postList" element={<PostList/>}/>
         <Route path="/bot" element={<Bot/>}/>
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/post-profile/:email" element={<PostProfile/>}/>
       </Routes>
       
     </ThemeProvider>
