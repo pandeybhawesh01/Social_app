@@ -44,6 +44,7 @@ function Post() {
     try {
       const { secure_url, public_id } = await uploadImageFrontend(selectedFile);
       setImageUrl(secure_url);
+        console.log('iamge url',imageUrl)
       console.log("Uploaded to Cloudinary:", public_id);
     } catch (err) {
       alert(err.message);
@@ -51,7 +52,7 @@ function Post() {
       setUploading(false);
     }
   };
-  console.log('iamge url',imageUrl)
+
 
 
 

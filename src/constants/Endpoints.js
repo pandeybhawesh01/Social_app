@@ -5,4 +5,6 @@ export const Endpoints = {
   profileData: '/user/data',
   updateProfile: '/user/update',
   userPosts: '/post/allPosts',
+  userPostsByEmail: (email) => `/post/postsbyemail/${email}`,
+  profileDataByEmail:(email)=>`/user/userbyemail/${email}`
 };

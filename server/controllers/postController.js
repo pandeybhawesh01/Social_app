@@ -236,12 +236,17 @@ export const createComment = async (req, res) => {
 export const getAllPosts = async (req, res) => {
   try {
     const { userId } = req;
-        const user = await userModel.findById(userId);
-        if (!user) {
-            return res.json({ success: false, message: "User not found" });
-        }
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
     const allPosts = await postModel.aggregate([
-      { $unwind: "$posts" }, 
+      { $unwind: "$posts" },
       {
         $project: {
           _id: "$_id",
@@ -249,11 +254,25 @@ export const getAllPosts = async (req, res) => {
           post: "$posts"
         }
       },
-      { $sort: { "post.createdAt": -1 } } 
+      { $sort: { "post.createdAt": -1 } },
+      { $skip: skip },
+      { $limit: limit }
     ]);
 
-    res.status(200).json({ success: true, posts: allPosts });
+    const totalCountResult = await postModel.aggregate([
+      { $unwind: "$posts" },
+      { $count: "total" }
+    ]);
+    const total = totalCountResult[0]?.total || 0;
+
+    res.status(200).json({
+      success: true,
+      posts: allPosts,
+      totalCount: total,
+      hasMore: skip + allPosts.length < total
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
