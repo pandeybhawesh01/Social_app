@@ -12,6 +12,7 @@ import axios from 'axios';
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import useBotViewModel from '../viewModels/BotViewModel';
 
 const Loader = () => (
     <div className="loader border-4 border-white border-t-transparent rounded-full w-6 h-6 animate-spin mx-auto"></div>
@@ -32,6 +33,8 @@ const Bot = () => {
     const fileInputRef = useRef(null);
     const messagesEndRef = useRef(null);
     const [showSidebar, setShowSidebar] = useState(false);
+
+    const {loading: viewLoading, error, getChat, deleteChat, createChat } = useBotViewModel();
 
     const ai = new GoogleGenAI({ apiKey: 'AIzaSyCgSq32mZyKE8BS-y8U64cLG34KU001Tho' });
 
@@ -109,13 +112,15 @@ const Bot = () => {
         setChatHistory(chat[index].chats);
     };
 
-    const addChats = async () => {
+    const createChats = async () => {
         if (!newChatName.trim()) return alert("Please enter a chat name");
 
         try {
-            const { data } = await axios.post(`${backendUrl}/api/bot/createChat`, {
-                name: newChatName,
-            });
+            // const { data } = await axios.post(`${backendUrl}/api/bot/createChat`, {
+            //     name: newChatName,
+            // });
+            const data = await createChat(newChatName);
+            console.log("data for create chat ", data);
             if (data.success) {
                 setNewChatName('');
                 setShowChatInput(false);
@@ -131,7 +136,9 @@ const Bot = () => {
 
     const getChats = async () => {
         try {
-            const { data } = await axios.get(`${backendUrl}/api/bot/chats`);
+            // const { data } = await axios.get(`${backendUrl}/api/bot/chats`);
+            const data = await getChat();
+            console.log("data for get chats ", data);
             if (data.success) {
                 setChat(data.data.allChats);
                 if (data.data.allChats.length > 0) {
@@ -146,23 +153,36 @@ const Bot = () => {
             alert('Failed to fetch chats. Please try again.');
         }
     };
-    const deleteChat = async (name) => {
-        try {
-            const { data } = await axios.delete(`${backendUrl}/api/bot/deleteChat`, { params: { name } });
-            if (data.success) {
-                alert(data.message);
-                getChats();
-            }
-            else {
-                alert(data.message);
-            }
-        }
-        catch (error) {
-            console.error('Error deleting chat:', error);
-            alert('Failed to delete chat. Please try again.');
-        }
-    }
+    // const deleteChat = async (name) => {
+    //     try {
+    //         // const { data } = await axios.delete(`${backendUrl}/api/bot/deleteChat`, { params: { name } });
+    //         const data = await deleteChat(name);
+    //         console.log('data for delete chat ',data)
+    //         if (data.success) {
+    //             alert(data.message);
+    //             getChats();
+    //         }
+    //         else {
+    //             // alert(data.message);
+    //         }
+    //     }
+    //     catch (error) {
+    //         console.error('Error deleting chat:', error);
+    //         // alert('Failed to delete chat. Please try again.');
+    //     }
+    // }
 
+    const handleDelete = async (name) => {
+    if (!window.confirm(`Delete chat "${name}"?`)) return;
+    try {
+      const msg = await deleteChat(name);
+      alert(msg);
+      // reload list
+      getChats();
+    } catch (err) {
+      alert("Could not delete chat: " + err.message);
+    }
+  };
     useEffect(() => {
         getChats();
     }, []);
@@ -190,7 +210,7 @@ const Bot = () => {
                                 placeholder="Enter chat name"
                                 value={newChatName}
                                 onChange={(e) => setNewChatName(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && addChats()}
+                                onKeyDown={(e) => e.key === 'Enter' && createChats()}
                                 className="w-full p-2 rounded bg-white text-black text-sm outline-none"
                             />
                         </div>
@@ -246,7 +266,7 @@ const Bot = () => {
                                     <DeleteForeverRoundedIcon
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            deleteChat(chatItem.name);
+                                            handleDelete(chatItem.name);
                                         }}
                                         className="text-red-400 hover:text-red-600"
                                     />
@@ -280,7 +300,7 @@ const Bot = () => {
                                         onChange={(e) => setNewChatName(e.target.value)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
-                                                addChats();
+                                                createChats();
                                             }
                                         }}
                                         className="p-2 rounded bg-white text-black text-sm outline-none"
