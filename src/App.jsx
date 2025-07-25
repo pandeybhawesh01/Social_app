@@ -16,26 +16,25 @@ import 'react-toastify/dist/ReactToastify.css'
 import PostList from './screens/postList'
 import { ThemeProvider } from './themeSelector/ThemeContext'
 import Bot from './screens/bot'
+import ProtectedRoute from './coponents/ProtectedRoute'
 
 const App = () => {
   return (
     <ThemeProvider>
-     
       <Routes>
         <Route path="/" element={<Home/>}/>
-        <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/email-verify" element={<EmailVerify/>}/>
         <Route path="/reset-password" element={<ResetPassword/>}/>
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
         <Route path="/admin" element={<Admin/>}/>
         <Route path="/post" element={<Post/>}/>
         <Route path="/adminList" element={<AdminList/>}/>
         <Route path="/postList" element={<PostList/>}/>
-        <Route path="/bot" element={<Bot/>}/>
-        <Route path="/profile" element={<Profile/>}/>
-        <Route path="/post-profile/:email" element={<PostProfile/>}/>
+        <Route path="/bot" element={<ProtectedRoute><Bot/></ProtectedRoute>}/>
+        <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
+        <Route path="/post-profile/:email" element={<ProtectedRoute><PostProfile/></ProtectedRoute>}/>
       </Routes>
-      
     </ThemeProvider>
   )
 }
