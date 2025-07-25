@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AppContext } from '../contex/AppContex';
 import { uploadImageFrontend, urlFor } from '../lib/cloudinary';
+import usePostViewModel from '../viewModels/postViewModel';
+import { CircularProgress } from '@mui/material';
 
 const collegeList = [
   "IIT Bombay", "IIT Delhi", "IIT Kanpur", "IIT Kharagpur", "IIT Madras",
@@ -26,6 +28,7 @@ function Post() {
   const [otherType, setOtherType] = useState("");
   const [college, setCollege] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const { loading, error, createPost } = usePostViewModel();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,10 +56,11 @@ function Post() {
     }
   };
 
+  console.log('iamge url', imageUrl)
 
 
 
-  const createPost = async (e) => {
+  const createPostfn = async (e) => {
     e.preventDefault(); // prevent form reload if used in a form
     try {
       const formData = new FormData();
@@ -67,12 +71,13 @@ function Post() {
 
       console.log("the data that is being uploaded ", formData);
 
-      const { data } = await axios.post(`${backendUrl}/api/post/createPost`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
+      // const { data } = await axios.post(`${backendUrl}/api/post/createPost`, formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      // });
+      const data = await createPost(formData);
+      console.log("data er get from create post", data);
       if (data.success) {
         alert('Post created successfully');
         navigate('/dashboard');
@@ -221,11 +226,17 @@ function Post() {
             </label>
           </div>
 
-          <button onClick={createPost}
+          <button
+            onClick={createPostfn}
+            disabled={loading}
             type="submit"
             className="w-full bg-blue-green text-whitetext py-2 rounded-md font-semibold cursor-pointer hover:bg-blue-green-hover transition duration-300 shadow-md"
           >
-            Create Post
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              <div>Create Post</div>
+            )}
           </button>
         </form>
       </div>

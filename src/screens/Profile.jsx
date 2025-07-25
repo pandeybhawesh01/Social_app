@@ -10,6 +10,7 @@ import Sidebar from '../coponents/sidebar';
 import ProfileHeader from '../coponents/ProfileHeader';
 import useProfileViewModel from '../viewModels/profileViewModel';
 import EditProfileModal from '../coponents/EditProfileModal';
+import ProfileShimmer from '../coponents/profileShimmer';
 const mockProfile = {
   id: 1,
   name: 'Bhawesh Pandey',
@@ -41,9 +42,7 @@ export default function Profile() {
   console.log("profile in prodile file ", profile);
   if(loading){
     return(
-      <div>
-        loading...
-      </div>
+      <ProfileShimmer isSidebarOpen={isOpen}/>
     )
   }
   if(error){
