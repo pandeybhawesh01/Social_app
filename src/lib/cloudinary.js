@@ -1,7 +1,9 @@
 import { Cloudinary } from "cloudinary-core";
 
-const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+// const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+// const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const cloudName = 'dktm5gmsg';
+const uploadPreset = 'college_verse_postUpload';
 
 if (!cloudName || !uploadPreset) {
   console.warn("Missing VITE_CLOUDINARY_* env vars");

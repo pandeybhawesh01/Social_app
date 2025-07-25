@@ -31,6 +31,7 @@ function Login() {
       } else {
         res = await axios.post(`${backendUrl}/api/auth/login`, { email, password });
       }
+      console.log("first". res)
 
       if (res.data.success) {
         setIsLoggedIn(true);

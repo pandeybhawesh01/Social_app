@@ -353,15 +353,18 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import FavoriteSharpIcon from '@mui/icons-material/FavoriteSharp';
 import Navbar from '../coponents/navbar';
 import { useNavigate, useNavigation } from 'react-router-dom';
+import usePostViewModel from '../viewModels/postViewModel';
+import PostsListShimmer from '../coponents/PostsListShimmer';
 
 function PostsList() {
   const { userData, backendUrl } = useContext(AppContext);
+  const { loading, error, getDashboardPost, postComment, likePost } = usePostViewModel();
   const [expandedPostId, setExpandedPostId] = useState(null);
   const [expandedPostUserId, setExpandedPostUserId] = useState(null);
  const [posts, setPosts] = useState([]);
 const [page, setPage] = useState(1);
 const [hasMore, setHasMore] = useState(true);
-const [loading, setLoading] = useState(false);
+// const [loading, setLoading] = useState(false);
 
   const [commenttext, setCommenttext] = useState("");
   const [expandedContentPostId, setExpandedContentPostId] = useState(null);
@@ -369,9 +372,9 @@ const [loading, setLoading] = useState(false);
   const [likedPost_id, setlikedPostId] = useState([]);
   const navigation = useNavigate();
 
-  useEffect(() => {
-  getPosts(); 
-}, []);
+//   useEffect(() => {
+//   getPosts(); 
+// }, []);
 
    useEffect(() => {
   const handleScroll = () => {
@@ -380,46 +383,62 @@ const [loading, setLoading] = useState(false);
       hasMore &&
       !loading
     ) {
-      getPosts();
+      fetchPosts();
     }
   };
   window.addEventListener("scroll", handleScroll);
   return () => window.removeEventListener("scroll", handleScroll);
 }, [hasMore, loading]);
 
-  const getPosts = async () => {
-    setLoading(true);
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/post/allUsersPosts?page=${page}&limit=10`);
-      if (data.success) {
-        console.log(data);
-        setPosts(prev=>[...prev,...data.posts])
-        setHasMore(data.hasMore)
-        setPage(prev=>(prev+1))
-        console.log(data.posts);
-      }
-      else {
-        alert(data.message)
-      }
-    }
-    catch (err) {
-      alert("error gtting all the posts");
-      console.log(err)
-    }
-    finally{
-      setLoading(false);
-    }
-  }
+  // const getPosts = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const { data } = await axios.get(`${backendUrl}/api/post/allUsersPosts?page=${page}&limit=10`);
+  //     if (data.success) {
+  //       console.log(data);
+  //       setPosts(prev=>[...prev,...data.posts])
+  //       setHasMore(data.hasMore)
+  //       setPage(prev=>(prev+1))
+  //       console.log(data.posts);
+  //     }
+  //     else {
+  //       alert(data.message)
+  //     }
+  //   }
+  //   catch (err) {
+  //     alert("error gtting all the posts");
+  //     console.log(err)
+  //   }
+  //   finally{
+  //     setLoading(false);
+  //   }
+  // }
  
 
+
+  const fetchPosts = async () => {
+        try{
+          const res = await getDashboardPost();
+          console.log("response from view model ",res);
+          setPosts(res.posts);
+        }
+        catch(e){
+          console.warn("there is an issue in the loading ", e);
+        }
+      }
+  useEffect(
+    () => {
+      fetchPosts()
+    }, []
+  )
   const comment = async (comment) => {
-    console.log(expandedPostId, comment, posts._id
-    );
+    console.log(expandedPostId, comment, posts._id,expandedPostUserId);
     try {
-      const { data } = await axios.post(`${backendUrl}/api/post/comment/${expandedPostUserId}/${expandedPostId}`, { comment });
+      // const { data } = await axios.post(`${backendUrl}/api/post/comment/${expandedPostUserId}/${expandedPostId}`, { comment });
+      const data =await postComment(expandedPostUserId, expandedPostId, comment);
       console.log(data)
       if (data.success) {
-        getPosts();
+        fetchPosts()
         setCommenttext("");
       }
       else {
@@ -428,16 +447,18 @@ const [loading, setLoading] = useState(false);
     }
     catch (err) {
       alert("error commenting on post");
-      console.log(err);
+      console.warn(err);
     }
   }
 
-  const likePost = async (likePostId, likePostUserId) => {
-    setlikedPostId([...likedPost_id, likePostId])
+  const likePostfn = async (likePostId, likePostUserId) => {
     try {
-      const { data } = await axios.post(`${backendUrl}/api/post/like-post/${likePostUserId}/${likePostId}`);
+      const data  = await likePost(likePostUserId,likePostId )
+      // const { data } = await axios.post(`${backendUrl}/api/post/like-post/${likePostUserId}/${likePostId}`);
+
+      console.log("like data", data)
       if (data.success) {
-        getPosts();
+        fetchPosts();
       }
       else {
         alert(data.message);
@@ -485,6 +506,11 @@ const [loading, setLoading] = useState(false);
     // For older posts, show date
     return postedDate.toLocaleDateString();
   };
+  if(loading){
+    return(
+      <PostsListShimmer isSidebarOpen={isOpen}/>
+    )
+  }
 
   return (
     <div className="flex">
@@ -538,6 +564,7 @@ const [loading, setLoading] = useState(false);
               {/* Header */}
               <div className="flex items-center space-x-4 mb-4">
                 <div onClick={() => onProfileClick(post.owner.email)}>
+
                 {post.owner.profilePic ? (
                   <div className='w-12 h-12 border-2 rounded-full border-[var(--hover-bg-grayhover)]'>
                     <img src={post.owner.profilePic} alt={`${post.owner.username} avatar`} className="w-11 h-11 rounded-full object-cover" />
@@ -606,7 +633,7 @@ const [loading, setLoading] = useState(false);
 
               {/* Actions */}
               <div className="flex justify-between items-center pt-3 border-t border-bordergray text-lightgray text-sm select-none">
-                <button onClick={() => likePost(post.post._id, post._id)}
+                <button onClick={() => likePostfn(post.post._id, post._id)}
                   className="flex items-center space-x-1 px-2 py-1 rounded-full transition-all duration-300 hover:bg-grayhover" style={{ color: 'var(--bg-blue-green)' }}
                 >
 
