@@ -9,7 +9,7 @@ export const Endpoints = {
   userPosts: '/post/allPosts',
   userPostsByEmail: (email) => `/post/postsbyemail/${email}`,
   profileDataByEmail:(email)=>`/user/userbyemail/${email}`,
-  getPosts: '/post/allUsersPosts',
+  getPosts:(page)=>`/post/allUsersPosts?page=${page}&limit=10`,
   commentOnPost: (expandedPostUserId, expandedPostId)=> `/post/comment/${expandedPostUserId}/${expandedPostId}`,
   likeOnPost: (likePostUserId, likePostId)=> `/post/like-post/${likePostUserId}/${likePostId}`,
   createPost: '/post/createPost',

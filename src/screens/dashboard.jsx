@@ -388,7 +388,7 @@ const [hasMore, setHasMore] = useState(true);
   };
   window.addEventListener("scroll", handleScroll);
   return () => window.removeEventListener("scroll", handleScroll);
-}, [hasMore, loading]);
+}, [hasMore]);
 
   // const getPosts = async () => {
   //   setLoading(true);
@@ -418,9 +418,8 @@ const [hasMore, setHasMore] = useState(true);
 
   const fetchPosts = async () => {
         try{
-          const res = await getDashboardPost();
+          const res = await getDashboardPost({page,setPosts,setHasMore,setPage});
           console.log("response from view model ",res);
-          setPosts(res.posts);
         }
         catch(e){
           console.warn("there is an issue in the loading ", e);

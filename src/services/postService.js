@@ -2,8 +2,8 @@ import apiClient from "../api/apiClient";
 import { Endpoints } from "../constants/Endpoints";
 
 export const postService = {
-    getAllPosts: async () => {
-        const res = apiClient.get(Endpoints.getPosts);
+    getAllPosts: async (page) => {
+        const res = apiClient.get(Endpoints.getPosts(page));
         return res;
     },
     commentOnPost: async (expandedPostUserId, expandedPostId, comment) => {
