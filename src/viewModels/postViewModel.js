@@ -5,17 +5,16 @@ const usePostViewModel = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const getDashboardPost = async ({page,setPosts,setHasMore,setPage}) => {
+    const getDashboardPost = async ({page,setPosts,setHasMore}) => {
         setLoading(true);
         setError(null);
         try {
             const res = await postService.getAllPosts(page);
+            console.log(page);
             if(res.data.success)
             {
                 setPosts(prev=>([...prev,...res.data.posts]))
-                
                 setHasMore(res.data.hasMore)
-                setPage(prev=>(prev+1))
                 return res.data;
             }
             else{

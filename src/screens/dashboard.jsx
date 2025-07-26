@@ -342,7 +342,7 @@
 
 // export default PostsList;
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Sidebar from '../coponents/sidebar';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import CommentRoundedIcon from '@mui/icons-material/CommentRounded';
@@ -364,6 +364,7 @@ function PostsList() {
  const [posts, setPosts] = useState([]);
 const [page, setPage] = useState(1);
 const [hasMore, setHasMore] = useState(true);
+const pageRef = useRef(1); 
 // const [loading, setLoading] = useState(false);
 
   const [commenttext, setCommenttext] = useState("");
@@ -388,7 +389,7 @@ const [hasMore, setHasMore] = useState(true);
   };
   window.addEventListener("scroll", handleScroll);
   return () => window.removeEventListener("scroll", handleScroll);
-}, [hasMore]);
+}, [loading,hasMore]);
 
   // const getPosts = async () => {
   //   setLoading(true);
@@ -418,7 +419,12 @@ const [hasMore, setHasMore] = useState(true);
 
   const fetchPosts = async () => {
         try{
-          const res = await getDashboardPost({page,setPosts,setHasMore,setPage});
+           const res = await getDashboardPost({
+      page: pageRef.current,
+      setPosts,
+      setHasMore,
+    });
+    pageRef.current += 1;
           console.log("response from view model ",res);
         }
         catch(e){
@@ -427,7 +433,11 @@ const [hasMore, setHasMore] = useState(true);
       }
   useEffect(
     () => {
+      console.log("currentpage",pageRef.current)
+      if(pageRef.current==1)
+      {
       fetchPosts()
+      }
     }, []
   )
   const comment = async (comment) => {
