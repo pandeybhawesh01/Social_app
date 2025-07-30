@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-
+const followers={type:String}
 const userSchema= new mongoose.Schema({
     name:{type: String, required:true},
     email: {type:String, required:true, unique:true},
@@ -14,7 +14,9 @@ const userSchema= new mongoose.Schema({
     resetOtpExpireAt:{type:Number,default:0},
     bio: {type:String, default:''},
     website: {type:String, default:''},
-    location:{type:String, default:''}
+    location:{type:String, default:''},
+    followers:{type:[followers],default:[]},
+    following:{type:[followers],default:[]}
 })
 
 

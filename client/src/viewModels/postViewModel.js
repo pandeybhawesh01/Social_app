@@ -3,6 +3,7 @@ import { postService } from "../services/postService";
 
 const usePostViewModel = () => {
     const [loading, setLoading] = useState(false);
+    const [comloading, setComLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const getDashboardPost = async ({page,setPosts,setHasMore}) => {
@@ -33,7 +34,7 @@ const usePostViewModel = () => {
         }
     }
     const postComment = async (expandedPostUserId, expandedPostId, comment) => {
-        setLoading(true);
+        setComLoading(true);
         setError(null);
         try {
             const res = await postService.commentOnPost(expandedPostUserId, expandedPostId, comment)
@@ -47,11 +48,11 @@ const usePostViewModel = () => {
             );
         }
         finally{
-            setLoading(false);
+            setComLoading(false);
         }
     }
     const likePost = async (likePostUserId, likePostId) => {
-        setLoading(true);
+       
         setError(null);
         try {
             const res = await postService.likeOnPost(likePostUserId, likePostId)
@@ -95,6 +96,7 @@ const usePostViewModel = () => {
         postComment,
         likePost,
         createPost,
+        comloading,
     }
 } 
 export default usePostViewModel;

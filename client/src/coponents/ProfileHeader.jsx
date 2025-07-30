@@ -16,8 +16,8 @@ export default function ProfileHeader({ profile, onEditProfile }) {
         location : profile.location,
         website: profile.website,
         joinedDate: "10/01/2005",
-        following: 10,
-        followers: 10,
+        following: profile.followers,
+        followers: profile.following,
     }
 
     return (
@@ -68,9 +68,9 @@ export default function ProfileHeader({ profile, onEditProfile }) {
                 </div>
 
                 <div className="flex gap-6 text-sm">
-                    <span className="font-bold text-gray-900">{fmt(profileData.following)}</span>
+                    <span className="font-bold text-gray-900">{fmt(profileData.following?.length)}</span>
                     <span className="text-gray-500">Following</span>
-                    <span className="font-bold text-gray-900">{fmt(profileData.followers)}</span>
+                    <span className="font-bold text-gray-900">{fmt(profileData.followers?.length)}</span>
                     <span className="text-gray-500">Followers</span>
                 </div>
             </div>
