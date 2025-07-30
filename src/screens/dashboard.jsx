@@ -410,9 +410,6 @@ function PostsList() {
 
   // like handler: toggles local state only
   const likePostfn = async (postId, postUserId) => {
-    try {
-      const data = await likePost(postUserId, postId);
-      if (data.success) {
         setPosts(prev =>
           prev.map(item => {
             if (item.post._id === postId) {
@@ -431,22 +428,14 @@ function PostsList() {
             return item;
           })
         );
-      } else {
-        alert(data.message);
-      }
-    } catch (err) {
-      console.error(error || err);
-      alert('Error liking post');
-    }
-  };
+        await likePost(postUserId, postId)
+      } 
 
   // comment handler: appends new comment locally
   const comment = async text => {
     if (!expandedPostId || !text.trim()) return;
-    try {
-      const data = await postComment(expandedPostUserId, expandedPostId, text);
-      console.log(expandedPostUserId, expandedPostId, text)
-      if (data.success) {
+   
+      
         const newComment = {
           comment: text,
           createdAt: new Date().toISOString(),
@@ -455,7 +444,7 @@ function PostsList() {
             profilePic: userData.image,
             email: userData.email,
           },
-        };
+        }
         
         setPosts(prev =>
           prev.map(item =>
@@ -473,15 +462,7 @@ function PostsList() {
               : item
           )
         );
-        console.log(posts)
-        setCommenttext('');
-      } else {
-        alert(data.message);
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Error commenting on post');
-    }
+       await postComment(expandedPostUserId, expandedPostId, text);
   };
 
   // Helpers
