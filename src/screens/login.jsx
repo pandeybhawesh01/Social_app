@@ -50,7 +50,7 @@ function Login() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-admin-pattern p-4">
       <div className="mb-8 text-center">
-        <h2 className="text-5xl font-extrabold text-gray font-outfit">INFOVERSE</h2>
+        <h2 className="text-5xl font-extrabold text-gray font-outfit">College Verse</h2>
         <p className="mt-2 text-xl text-moderategray">Upload and share your best reels</p>
       </div>
       <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/3 bg-whitebg border border-bordergray shadow-2xl rounded-2xl p-8">
