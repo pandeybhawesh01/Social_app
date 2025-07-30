@@ -72,34 +72,7 @@ export const updateUser = async (req, res) => {
     if (location != null) user.location = location;
     if (image != null)    user.image    = image;
     if (banner != null)   user.banner   = banner;
-
-    // if (req.files && req.files.image) {
-    //   const file = req.files.image;
-    //   if (!file.mimetype.startsWith("image/")) {
-    //     return res.json({
-    //       success: false,
-    //       message: "Please upload a valid image for avatar",
-    //     });
-    //   }
-    //   const result = await uploadToCloudinary(file.tempFilePath, {
-    //     folder: "Users/Avatars",
-    //   });
-    //   user.image = result.url;
-    // }
-
-    // if (req.files && req.files.banner) {
-    //   const file = req.files.banner;
-    //   if (!file.mimetype.startsWith("image/")) {
-    //     return res.json({
-    //       success: false,
-    //       message: "Please upload a valid image for banner",
-    //     });
-    //   }
-    //   const result = await uploadToCloudinary(file.tempFilePath, {
-    //     folder: "Users/Banners",
-    //   });
-    //   user.banner = result.url;
-    // }
+    
 
     await user.save();
     return res.json({
