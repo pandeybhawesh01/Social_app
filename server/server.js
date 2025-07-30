@@ -12,7 +12,7 @@ import botRouter from './routes/botRoutes.js';
 
 const app =express()
 const port= process.env.PORT|| 4000;
-const allowedOrigins=['http://localhost:5173']
+const allowedOrigins=['http://localhost:5173','https://college-verse-silk.vercel.app']
 
 connectDB();
 app.use(cors({
