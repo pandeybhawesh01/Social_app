@@ -19,6 +19,8 @@ export const getUserData = async(req,res)=>{
             location: user.location,
             image: user.image,
             banner:user.banner,
+            followers:user.followers,
+            following:user.following
         }})
     }
     catch(error){
@@ -42,6 +44,8 @@ export const getUserByEmail= async(req,res)=>{
             location: user.location,
             image: user.image,
             banner:user.banner,
+            followers:user.followers,
+            following:user.following
   }})
 }
 catch(err)
@@ -119,3 +123,33 @@ export const updateUser = async (req, res) => {
     return res.json({ success: false, message: error.message });
   }
 };
+
+export const followUser = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { email } = req.body;
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+    const followUser = await userModel.findOne({ email });
+    if (!followUser) {
+      return res.json({ success: false, message: "Can't follow this user" });
+    }
+    if (user.email === followUser.email) {
+      return res.json({ success: false, message: "You cannot follow yourself" });
+    }
+    if (followUser.followers.includes(user.email)) {
+      return res.json({ success: false, message: "Already following this user" });
+    }
+    followUser.followers.push(user.email);
+    user.following.push(followUser.email);
+    await followUser.save();
+    await user.save();
+    return res.json({ success: true, message: "Successfully followed the user" });
+  } catch (err) {
+    return res.json({ success: false, message: err.message });
+  }
+};
+
+

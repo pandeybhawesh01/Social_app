@@ -348,177 +348,171 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import CommentRoundedIcon from '@mui/icons-material/CommentRounded';
 import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
 import { AppContext } from '../contex/AppContex';
-import axios from 'axios';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import FavoriteSharpIcon from '@mui/icons-material/FavoriteSharp';
 import Navbar from '../coponents/navbar';
-import { useNavigate, useNavigation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import usePostViewModel from '../viewModels/postViewModel';
 import PostsListShimmer from '../coponents/PostsListShimmer';
 
 function PostsList() {
-  const { userData, backendUrl } = useContext(AppContext);
-  const { loading, error, getDashboardPost, postComment, likePost } = usePostViewModel();
+  const { userData } = useContext(AppContext);
+  const { loading, getDashboardPost, postComment, likePost, error } = usePostViewModel();
+
+  const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const pageRef = useRef(1);
+
   const [expandedPostId, setExpandedPostId] = useState(null);
   const [expandedPostUserId, setExpandedPostUserId] = useState(null);
- const [posts, setPosts] = useState([]);
-const [page, setPage] = useState(1);
-const [hasMore, setHasMore] = useState(true);
-const pageRef = useRef(1); 
-// const [loading, setLoading] = useState(false);
-
-  const [commenttext, setCommenttext] = useState("");
   const [expandedContentPostId, setExpandedContentPostId] = useState(null);
-  const [isOpen, setIsOpen] = useState(null);
-  const [likedPost_id, setlikedPostId] = useState([]);
+  const [commenttext, setCommenttext] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+
+
   const navigation = useNavigate();
+  console.log(userData)
 
-//   useEffect(() => {
-//   getPosts(); 
-// }, []);
-
-   useEffect(() => {
-  const handleScroll = () => {
-    if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 &&
-      hasMore &&
-      !loading
-    ) {
-      fetchPosts();
-    }
-  };
-  window.addEventListener("scroll", handleScroll);
-  return () => window.removeEventListener("scroll", handleScroll);
-}, [loading,hasMore]);
-
-  // const getPosts = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const { data } = await axios.get(`${backendUrl}/api/post/allUsersPosts?page=${page}&limit=10`);
-  //     if (data.success) {
-  //       console.log(data);
-  //       setPosts(prev=>[...prev,...data.posts])
-  //       setHasMore(data.hasMore)
-  //       setPage(prev=>(prev+1))
-  //       console.log(data.posts);
-  //     }
-  //     else {
-  //       alert(data.message)
-  //     }
-  //   }
-  //   catch (err) {
-  //     alert("error gtting all the posts");
-  //     console.log(err)
-  //   }
-  //   finally{
-  //     setLoading(false);
-  //   }
-  // }
- 
-
-
-  const fetchPosts = async () => {
-        try{
-           const res = await getDashboardPost({
-      page: pageRef.current,
-      setPosts,
-      setHasMore,
-    });
-    pageRef.current += 1;
-          console.log("response from view model ",res);
-        }
-        catch(e){
-          console.warn("there is an issue in the loading ", e);
-        }
-      }
-  useEffect(
-    () => {
-      console.log("currentpage",pageRef.current)
-      if(pageRef.current==1)
-      {
-      fetchPosts()
-      }
-    }, []
-  )
-  const comment = async (comment) => {
-    console.log(expandedPostId, comment, posts._id,expandedPostUserId);
-    try {
-      // const { data } = await axios.post(`${backendUrl}/api/post/comment/${expandedPostUserId}/${expandedPostId}`, { comment });
-      const data =await postComment(expandedPostUserId, expandedPostId, comment);
-      console.log(data)
-      if (data.success) {
-        fetchPosts()
-        setCommenttext("");
-      }
-      else {
-        alert(data.message);
-      }
-    }
-    catch (err) {
-      alert("error commenting on post");
-      console.warn(err);
-    }
-  }
-
-  const likePostfn = async (likePostId, likePostUserId) => {
-    try {
-      const data  = await likePost(likePostUserId,likePostId )
-      // const { data } = await axios.post(`${backendUrl}/api/post/like-post/${likePostUserId}/${likePostId}`);
-
-      console.log("like data", data)
-      if (data.success) {
+  // infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 &&
+        hasMore &&
+        !loading
+      ) {
         fetchPosts();
       }
-      else {
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading,hasMore]);
+
+  // initial load
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    console.log('Fetching page:', pageRef.current);
+    try {
+      const res = await getDashboardPost({
+        page: pageRef.current,
+        setPosts,
+        setHasMore,
+      });
+      pageRef.current += 1;
+    } catch (e) {
+      console.warn('Error loading posts', e);
+    }
+  };
+
+  // like handler: toggles local state only
+  const likePostfn = async (postId, postUserId) => {
+    try {
+      const data = await likePost(postUserId, postId);
+      if (data.success) {
+        setPosts(prev =>
+          prev.map(item => {
+            if (item.post._id === postId) {
+              const already = item.post.likes.some(l => l.email === userData.email);
+              const newLikes = already
+                ? item.post.likes.filter(l => l.email !== userData.email)
+                : [...item.post.likes, { email: userData.email }];
+              return {
+                ...item,
+                post: {
+                  ...item.post,
+                  likes: newLikes,
+                },
+              };
+            }
+            return item;
+          })
+        );
+      } else {
         alert(data.message);
       }
+    } catch (err) {
+      console.error(error || err);
+      alert('Error liking post');
     }
-    catch (err) {
-      alert("error liking post");
-      console.log(err);
+  };
+
+  // comment handler: appends new comment locally
+  const comment = async text => {
+    if (!expandedPostId || !text.trim()) return;
+    try {
+      const data = await postComment(expandedPostUserId, expandedPostId, text);
+      console.log(expandedPostUserId, expandedPostId, text)
+      if (data.success) {
+        const newComment = {
+          comment: text,
+          createdAt: new Date().toISOString(),
+          user: {
+            username: userData.name,
+            profilePic: userData.image,
+            email: userData.email,
+          },
+        };
+        
+        setPosts(prev =>
+          prev.map(item =>
+            item.post._id === expandedPostId
+              ? {
+                
+                  ...item,
+                  
+                  post: {
+                    ...item.post,
+                    comments: [...item.post.comments, newComment],
+                  },
+                  
+                }
+              : item
+          )
+        );
+        console.log(posts)
+        setCommenttext('');
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error commenting on post');
     }
-
-  }
-  const onProfileClick =(email)=>{
-    navigation(`/post-profile/${email}`)
-  }
-
-  const toggleExpanded = (postId) => {
-    setExpandedContentPostId(prev => prev === postId ? null : postId);
-  };
-  const truncateText = (text, maxChars = 150) => {
-    if (text.length <= maxChars) return text;
-    return text.slice(0, maxChars).trim() + '...';
   };
 
-  const toggleCommentSection = (id, postUserId) => {
-    setExpandedPostId(prev => (prev === id ? null : id));
-    setExpandedPostUserId(prev => (prev === postUserId ? null : postUserId));
-  };
+  // Helpers
+  const truncateText = (text, maxChars = 150) =>
+    text.length <= maxChars ? text : text.slice(0, maxChars).trim() + '...';
 
+  const onProfileClick = email => navigation(`/post-profile/${email}`);
+  const toggleExpanded = postId =>
+    setExpandedContentPostId(prev => (prev === postId ? null : postId));
+  const toggleCommentSection = (postId, postUserId) => {
+    setExpandedPostId(prev => (prev === postId ? null : postId));
+    console.log(postUserId)
+    setExpandedPostUserId(postUserId);
+  };
   const onShare = () => {
-    if (navigator.share) {
-      navigator.share({ title: 'CollegeVerse Post', url: window.location.href });
-    } else {
-      alert('Share feature is not supported in your browser.');
-    }
+    if (navigator.share) navigator.share({ title: 'CollegeVerse Post', url: window.location.href });
+    else alert('Share not supported');
   };
-  const getTimeAgo = (dateString) => {
-    const now = new Date();
-    const postedDate = new Date(dateString);
-    const diffInSeconds = Math.floor((now - postedDate) / 1000);
+  const getTimeAgo = dateString => {
+    const now = Date.now();
+    const then = new Date(dateString).getTime();
+    const d = Math.floor((now - then) / 1000);
+    if (d < 60) return 'Just now';
+    if (d < 3600) return `${Math.floor(d / 60)}m ago`;
+    if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
+    if (d < 604800) return `${Math.floor(d / 86400)}d ago`;
+    return new Date(dateString).toLocaleDateString();
+  };
 
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    // For older posts, show date
-    return postedDate.toLocaleDateString();
-  };
-  if(loading){
-    return(
-      <PostsListShimmer isSidebarOpen={isOpen}/>
-    )
+  if (loading && posts.length === 0) {
+    return <PostsListShimmer isSidebarOpen={isOpen} />;
   }
 
   return (
@@ -646,16 +640,15 @@ const pageRef = useRef(1);
                   className="flex items-center space-x-1 px-2 py-1 rounded-full transition-all duration-300 hover:bg-grayhover" style={{ color: 'var(--bg-blue-green)' }}
                 >
 
-                  {post.post.likes.some(like => like.email === userData?.email) ? (<FavoriteSharpIcon />) : (likedPost_id.some(id => id == post.post._id) ? (<FavoriteSharpIcon />) : (<FavoriteBorderOutlinedIcon />))}
+                  {post.post.likes.some(like => like.email === userData?.email) ? (<FavoriteSharpIcon />) :  (<FavoriteBorderOutlinedIcon />)}
 
                   {/* <span>{post.post.likes.length +likecount}</span> */}
                   <span>
                     {
                       post.post.likes.some(like => like.email === userData?.email)
                         ? post.post.likes.length
-                        : (likedPost_id.some(id => id === post.post._id)
-                          ? post.post.likes.length + 1
-                          : post.post.likes.length)
+                      
+                          : post.post.likes.length
                     }
                   </span>
 
@@ -755,7 +748,3 @@ const pageRef = useRef(1);
 }
 
 export default PostsList;
-
-
-
-
