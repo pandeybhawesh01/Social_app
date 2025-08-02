@@ -99,6 +99,8 @@ import { cn } from "../lib/utils";
 import { AppContext } from "../contex/AppContex";
 import axios from "axios";
 
+import { X } from "lucide-react";
+
 const Sidebar = ({isOpen,setIsOpen}) => {
   const {backendUrl, setUserData, setIsLoggedIn}=useContext(AppContext)
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -128,16 +130,24 @@ const Sidebar = ({isOpen,setIsOpen}) => {
 
   return (
 
+    <div>
+      <button onClick={toggleSidebar} className="z-2 fixed p-4 rounded hover:bg-hover-bg-grayhover focus:outline-none">
+          <MenuIcon />
+        </button>
     <div
       className={
-        `fixed top-0 left-0 h-screen bg-blue-green text-whitetext flex flex-col shadow-2xl transition-all duration-300 z-20 ` +
-        (isOpen ? 'w-64 p-4' : 'w-16 p-2')
+        `fixed top-0 left-0 h-full bg-blue-green text-whitetext md:flex flex-col shadow-2xl transition-all duration-300 z-20 ` +
+        (isOpen ? 'w-64 p-4' : '  hidden w-16 p-2')
       }
     >
+      
       <div className="flex items-center justify-between mb-4">
         {isOpen && <h1 className="text-2xl font-extrabold">College Verse</h1>}
-        <button onClick={toggleSidebar} className="p-2 rounded hover:bg-hover-bg-grayhover focus:outline-none">
+        <button onClick={toggleSidebar} className="hidden md:flex p-2 rounded hover:bg-hover-bg-grayhover focus:outline-none">
           <MenuIcon />
+        </button>
+        <button onClick={toggleSidebar} className="md:hidden p-2 rounded hover:bg-hover-bg-grayhover focus:outline-none">
+          <X/>
         </button>
       </div>
 
@@ -151,7 +161,7 @@ const Sidebar = ({isOpen,setIsOpen}) => {
             className="flex items-center p-3 rounded-md hover:bg-hover-bg-grayhover transition-colors duration-200"
           >
             <Icon className="text-xl" />
-            {isOpen && <span className="ml-4 font-medium">{label}</span>}
+            {isOpen && <span className="ml-4 text-lg font-medium">{label}</span>}
           </Link>
         ))}
 
@@ -163,6 +173,7 @@ const Sidebar = ({isOpen,setIsOpen}) => {
         )}>
           © 2024 CollegeVerse
         </div>
+      </div>
       </div>
     </div>
   );

@@ -34,7 +34,7 @@ const Bot = () => {
     const messagesEndRef = useRef(null);
     const [showSidebar, setShowSidebar] = useState(false);
 
-    const {loading: viewLoading, error, getChat, deleteChat, createChat } = useBotViewModel();
+    const { loading: viewLoading, error, getChat, deleteChat, createChat } = useBotViewModel();
 
     const ai = new GoogleGenAI({ apiKey: 'AIzaSyCgSq32mZyKE8BS-y8U64cLG34KU001Tho' });
 
@@ -173,16 +173,16 @@ const Bot = () => {
     // }
 
     const handleDelete = async (name) => {
-    if (!window.confirm(`Delete chat "${name}"?`)) return;
-    try {
-      const msg = await deleteChat(name);
-      alert(msg);
-      // reload list
-      getChats();
-    } catch (err) {
-      alert("Could not delete chat: " + err.message);
-    }
-  };
+        if (!window.confirm(`Delete chat "${name}"?`)) return;
+        try {
+            const msg = await deleteChat(name);
+            alert(msg);
+            // reload list
+            getChats();
+        } catch (err) {
+            alert("Could not delete chat: " + err.message);
+        }
+    };
     useEffect(() => {
         getChats();
     }, []);
@@ -191,7 +191,7 @@ const Bot = () => {
         <div className='flex flex-row h-screen'>
             {/* Sidebar */}
 
-            <div className="w-[20%] bg-blue-green text-whitetext p-6 hidden sm:flex flex-col gap-4">
+            <div className="w-[16%] bg-blue-green text-whitetext p-6 hidden sm:flex flex-col gap-4">
                 {/* New Chat Section */}
                 <div>
                     <div
@@ -277,9 +277,9 @@ const Bot = () => {
             </div>
 
             {showSidebar && (
-                <div className="fixed inset-0 z-40 bg-blue-green w-[60%] text-whitetext p-8 flex flex-col gap-4 sm:hidden transition-transform">
+                <div className="p-4 pt-2 fixed inset-0 z-40 bg-blue-green w-[60%] text-whitetext md:p-8 flex flex-col md:gap-4 sm:hidden transition-transform">
                     <div className="flex justify-end">
-                        <button onClick={() => setShowSidebar(false)} className="text-white text-xl font-bold">×</button>
+                        <button onClick={() => setShowSidebar(false)} className="text-white text-3xl ">×</button>
                     </div>
                     <div className='w-full bg-blue-green text-whitetext  flex-col  gap-4  flex'>
                         <div className='flex flex-col gap-0 mb-2'>
@@ -363,12 +363,30 @@ const Bot = () => {
                     </div>
                 </div>
             )}
-
             {/* Chat Screen */}
-            <div className="w-[100%] relative min-h-screen bg-admin-pattern text-gray flex flex-col justify-between sm-w[80%] md:w-[80%]">
-                <div className="sm:hidden fixed top-4 left-4 z-50  p-2 rounded shadow-lg">
-                    <MenuRoundedIcon onClick={() => setShowSidebar(!showSidebar)} className="cursor-pointer text-blue-green" />
+            <div className="w-[100%] relative min-h-screen bg-admin-pattern text-gray flex flex-col justify-between sm-w[86%] md:w-[86%]">
+                <div className='flex flex-col justify-center items-center text-center h-[8%] relative'>
+                    <div className="sm:hidden fixed left-4  p-2 rounded shadow-lg">
+                        <MenuRoundedIcon
+                            onClick={() => setShowSidebar(!showSidebar)}
+                            className="cursor-pointer text-blue-green"
+                        />
+                    </div>
+
+                    <div className="text-center ">
+                        <h1
+                            className="text-3xl sm:text-6xl font-extrabold leading-tight sm:leading-[1.2] animate-pop text-transparent bg-clip-text inline-block"
+                            style={{
+                                backgroundImage: 'linear-gradient(to right, var(--bg-blue-green), var(--hover-bg-blue-green-hover))',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                            }}
+                        >
+                            CollegeVerse
+                        </h1>
+                    </div>
                 </div>
+
 
                 {chatHistory.length === 0 ? (
                     <div className="flex-1 flex justify-center items-center flex-col">

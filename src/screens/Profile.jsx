@@ -57,7 +57,7 @@ export default function Profile() {
     // <div> mai kar satka hu</div>
     <div className="flex min-h-screen w-full bg-admin-pattern">
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}/>
-      <div className={`flex-1 ${isOpen? 'ml-64' : 'ml-16'} transition-all duration-300`}>
+      <div className={`flex-1 ${isOpen? 'md:ml-64' : 'md:ml-16'} transition-all duration-300`}>
         {profile && <ProfileHeader profile={profile} onEditProfile={() => setIsEditOpen(true)} />}
 
         <div className="max-w-6xl mx-auto mt-8">
@@ -95,7 +95,7 @@ export default function Profile() {
                       <div className="flex gap-4">
                         <img
                           src={profile?.image}
-                          alt={profile.name}
+                          alt={profile?.name}
                           className="w-12 h-12 rounded-full object-cover border border-purple-200"
                         />
                         <div className="flex-1 min-w-0">

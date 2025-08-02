@@ -94,7 +94,7 @@ function Post() {
   return (
     <div className="min-h-screen bg-admin-pattern bg-fixed">
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div className={`${isOpen ? 'ml-64' : 'ml-16'} p-8 rounded-lg shadow-lg transition-all duration-300`}>
+      <div className={`${isOpen ? 'md:ml-64' : 'md:ml-16'} p-8 rounded-lg shadow-lg transition-all duration-300`}>
         <h2 className="text-center text-xl font-semibold text-gray border-b pb-2">
           Create a Post
         </h2>

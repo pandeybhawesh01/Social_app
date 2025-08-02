@@ -500,7 +500,7 @@ function PostsList() {
     <div className="flex">
       <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} />
       <Navbar/>
-      <div className={`flex-1 min-h-screen bg-admin-pattern py-10 px-4 sm:px-6 lg:px-8 ${isOpen ? 'ml-64' : 'ml-16'} transition-all duration-300`} >
+      <div className={`flex-1 min-h-screen bg-admin-pattern py-10 px-4 sm:px-6 lg:px-8 ${isOpen ? 'md:ml-64' : 'md:ml-16'} transition-all duration-300`} >
         <div className="text-center mb-16">
           <h1
             className="text-5xl sm:text-6xl font-extrabold leading-tight sm:leading-[1.2] animate-pop text-transparent bg-clip-text inline-block"
@@ -518,7 +518,7 @@ function PostsList() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 px-32">
+        <div className=" hidden md:grid md:grid-cols-4  gap-8 mb-12 px-32 display-none">
           {[
             { label: 'Active Students', value: '12.5K' },
             { label: 'Universities', value: '150+' },
