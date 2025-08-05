@@ -98,6 +98,7 @@ import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { cn } from "../lib/utils";
 import { AppContext } from "../contex/AppContex";
 import axios from "axios";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 const Sidebar = ({isOpen,setIsOpen}) => {
   const {backendUrl, setUserData, setIsLoggedIn}=useContext(AppContext)
@@ -111,11 +112,11 @@ const Sidebar = ({isOpen,setIsOpen}) => {
       data.success && setUserData(null);
       data.success && setIsLoggedIn(false);
       navigate('/');
-      alert('Logged out successfully');
+      toast.success('Logged out successfully');
     }
     catch(err)
     {
-      alert("Failed to logout")
+      toast.error("Failed to logout")
     }
    }
    const menuItems = [
@@ -164,6 +165,19 @@ const Sidebar = ({isOpen,setIsOpen}) => {
           © 2024 CollegeVerse
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };

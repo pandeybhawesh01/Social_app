@@ -17,6 +17,8 @@ import PostList from './screens/postList'
 import { ThemeProvider } from './themeSelector/ThemeContext'
 import Bot from './screens/bot'
 import ProtectedRoute from './coponents/ProtectedRoute'
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const App = () => {
   return (

@@ -8,13 +8,6 @@ import LandingNavbar from '../coponents/LandingNavbar'
 import heroImage    from '../assets/hero-image.jpg'
 // import waveIcon     from '../assets/wave-icon.png'
 
-import MovieIcon                from '@mui/icons-material/Movie'
-import GroupIcon                from '@mui/icons-material/Group'
-import ChatBubbleOutlineIcon    from '@mui/icons-material/ChatBubbleOutline'
-import ShareIcon                from '@mui/icons-material/Share'
-import MenuBookIcon             from '@mui/icons-material/MenuBook'
-import FlashOnIcon              from '@mui/icons-material/FlashOn'
-
 export default function Index() {
   const navigate = useNavigate()
 
@@ -23,15 +16,12 @@ export default function Index() {
   style={{ backgroundColor: '#7C3AED' }}>
     <LandingNavbar />
 
-    {/* Hero Section */}
     <section className="relative pt-20 pb-16 px-4 overflow-hidden bg-purple-100">
-      {/* Soft background glow effect */}
       <div className="absolute inset-0 bg-purple-100 opacity-30 rounded-3xl blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-full mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-          {/* Left content */}
           <div className="text-center lg:text-left z-10 relative">
             <div className="flex items-center justify-center lg:justify-start gap-2 mb-6">
               <h1 className="text-xl font-semibold text-black">Hey Student!</h1>
@@ -51,22 +41,14 @@ export default function Index() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
                 size="lg"
-                onClick={() => navigate('/signup')}
-                className="text-base px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md rounded-md"
-              >
-                Get Started Free
-              </Button>
-              <Button
-                size="lg"
                 onClick={() => navigate('/login')}
-                className="text-base px-8 py-3 border border-gray-300 hover:bg-gray-100 text-black rounded-md"
+                className="text-base px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md rounded-md"
               >
                 Login
               </Button>
             </div>
           </div>
 
-          {/* Right image */}
           <div className="relative">
             <div className="absolute inset-0 bg-purple-300 opacity-20 blur-3xl rounded-3xl pointer-events-none" />
             <img
@@ -79,7 +61,6 @@ export default function Index() {
       </div>
     </section>
 
-    {/* Features Section */}
     <section className="py-16 px-4 bg-purple-100">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
@@ -94,7 +75,6 @@ export default function Index() {
     </section>
 
 
-    {/* Footer */}
     <footer className="py-8 px-4 border-t border-gray-200 bg-purple-100">
       <div className="max-w-7xl mx-auto text-center">
         <p className="text-gray-500">
@@ -104,5 +84,4 @@ export default function Index() {
     </footer>
   </div>
 )
-
 }

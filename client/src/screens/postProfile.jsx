@@ -5,6 +5,7 @@ import ProfileHeader from '../coponents/ProfileHeader';
 import useProfileViewModel from '../viewModels/profileViewModel';
 import EditProfileModal from '../coponents/EditProfileModal';
 import { useParams } from 'react-router-dom';
+import ProfileShimmer from '../coponents/profileShimmer';
 const mockProfile = {
   id: 1,
   name: 'Bhawesh Pandey',
@@ -20,12 +21,8 @@ const mockProfile = {
 };
 
 
-
 export default function PostProfile() {
-  // const [profile] = useState(mockProfile);
-  // const [posts] = useState(mockPosts);
   const [activeTab, setActiveTab] = useState('posts');
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const { profile, posts, loading, error,fetchPostsByEmail,fetchProfileByEmail  } = useProfileViewModel();
   const [isOpen,setIsOpen]= useState(false);
   const {email}= useParams();
@@ -33,18 +30,10 @@ export default function PostProfile() {
   useEffect(() => {
     fetchProfileByEmail(email)
     fetchPostsByEmail(email)
-    console.log("profile", profile);
   }, []);  
-  const handleSaveProfile = (upd) => {
-
-  };
-  console.log("profile", profile);
-  console.log("posgts ", posts);
   if(loading){
     return(
-      <div>
-        loading...
-      </div>
+      <ProfileShimmer/>
     )
   }
   console.log("error",error)
@@ -57,7 +46,6 @@ export default function PostProfile() {
   }
 
   return (
-    // <div> mai kar satka hu</div>
     <div className="flex min-h-screen w-full bg-admin-pattern">
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}/>
       <div className={`flex-1 ${isOpen? 'ml-64' : 'ml-16'} transition-all duration-300`}>
@@ -150,103 +138,8 @@ export default function PostProfile() {
         </div>
        
 
-        {/* Bottom spacing */}
         <div className="h-8"></div>
       </div>
     </div>
   );
 }
-
-// import React, { useState } from 'react';
-// import ProfileHeader from '../coponents/ProfileHeader';
-// import CreatePost from '../coponents/CreatePost';
-// import PostCard from '../coponents/PostCard';
-// import EditProfileModal from '../coponents/EditProfileModal';
-
-// const mockProfile = {
-//   id: 1,
-//   name: 'Bhawesh Pandey',
-//   username: 'bhaweshpandey',
-//   bio: '3rd Year B.Tech Student | BIT Mesra',
-//   avatar: 'https://i.pravatar.cc/150?img=2',
-//   banner: 'https://via.placeholder.com/800x200.png',
-//   followers: 120,
-//   following: 75,
-//   location: 'Ranchi, India',
-//   website: 'https://collegeverse.com',
-//   joinedDate: 'Jul 2025',
-// };
-
-// export default function Profile() {
-//   const [profile, setProfile] = useState(mockProfile);
-//   const [posts, setPosts] = useState([]);
-//   const [activeTab, setActiveTab] = useState('posts');
-//   const [isEditOpen, setIsEditOpen] = useState(false);
-
-//   const handleCreatePost = (content, images) => {
-//     const newPost = {
-//       id: Date.now(),
-//       content,
-//       timestamp: 'Just now',
-//       likes: 0,
-//       retweets: 0,
-//       replies: 0,
-//       images,
-//     };
-//     setPosts([newPost, ...posts]);
-//   };
-
-//   const handleSaveProfile = (upd) => {
-//     setProfile(upd);
-//     setIsEditOpen(false);
-//   };
-
-//   return (
-//     <div className=" flex min-h-screen bg-gray-50">
-//       <div className="max-w-4xl mx-auto bg-white min-h-screen">
-//         <ProfileHeader profile={profile} onEditProfile={() => setIsEditOpen(true)} />
-
-//         {/* Tabs */}
-//         <div className="border-b border-gray-200 sticky top-0 bg-white z-10">
-//           <div className="flex">
-//             {['posts', 'replies', 'media', 'likes'].map((tab) => (
-//               <button
-//                 key={tab}
-//                 onClick={() => setActiveTab(tab)}
-//                 className={`flex-1 py-4 px-6 text-sm font-medium capitalize transition-colors hover:bg-gray-50 ${
-//                   activeTab === tab ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'
-//                 }`}
-//               >
-//                 {tab}
-//               </button>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Content */}
-//         <div className="divide-y divide-gray-100">
-//           {activeTab === 'posts' && (
-//             <>
-//               <CreatePost onCreatePost={handleCreatePost} />
-//               {posts.map((p) => (
-//                 <PostCard key={p.id} post={p} user={profile} />
-//               ))}
-//             </>
-//           )}
-//           {activeTab !== 'posts' && (
-//             <div className="p-8 text-center text-gray-500">
-//               <p>No {activeTab} yet.</p>
-//             </div>
-//           )}
-//         </div>
-
-//         <EditProfileModal
-//           isOpen={isEditOpen}
-//           onClose={() => setIsEditOpen(false)}
-//           profile={profile}
-//           onSave={handleSaveProfile}
-//         />
-//       </div>
-//     </div>
-//   );
-// }

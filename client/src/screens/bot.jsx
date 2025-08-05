@@ -13,6 +13,8 @@ import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import useBotViewModel from '../viewModels/BotViewModel';
+import ChatShimmer from '../coponents/botShimmer';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 const Loader = () => (
     <div className="loader border-4 border-white border-t-transparent rounded-full w-6 h-6 animate-spin mx-auto"></div>
@@ -34,7 +36,7 @@ const Bot = () => {
     const messagesEndRef = useRef(null);
     const [showSidebar, setShowSidebar] = useState(false);
 
-    const {loading: viewLoading, error, getChat, deleteChat, createChat } = useBotViewModel();
+    const { loading: viewLoading, error, getChat, deleteChat, createChat, getChatLoading } = useBotViewModel();
 
     const ai = new GoogleGenAI({ apiKey: 'AIzaSyCgSq32mZyKE8BS-y8U64cLG34KU001Tho' });
 
@@ -113,12 +115,9 @@ const Bot = () => {
     };
 
     const createChats = async () => {
-        if (!newChatName.trim()) return alert("Please enter a chat name");
+        if (!newChatName.trim()) return toast.warn("Please enter a chat name");
 
         try {
-            // const { data } = await axios.post(`${backendUrl}/api/bot/createChat`, {
-            //     name: newChatName,
-            // });
             const data = await createChat(newChatName);
             console.log("data for create chat ", data);
             if (data.success) {
@@ -126,17 +125,16 @@ const Bot = () => {
                 setShowChatInput(false);
                 await getChats();
             } else {
-                alert(data.message);
+                toast,error(data.message);
             }
         } catch (error) {
             console.error('Error adding chat:', error);
-            alert('Failed to create chat. Please try again.');
+            toast.error('Failed to create chat. Please try again.');
         }
     };
 
     const getChats = async () => {
         try {
-            // const { data } = await axios.get(`${backendUrl}/api/bot/chats`);
             const data = await getChat();
             console.log("data for get chats ", data);
             if (data.success) {
@@ -146,53 +144,36 @@ const Bot = () => {
                     setChatHistory(data.data.allChats[0].chats);
                 }
             } else {
-                alert(data.message);
+                toast.error(data.message);
             }
         } catch (error) {
             console.error('Error fetching chats:', error);
-            alert('Failed to fetch chats. Please try again.');
+            toast.error('Failed to fetch chats. Please try again.');
         }
     };
-    // const deleteChat = async (name) => {
-    //     try {
-    //         // const { data } = await axios.delete(`${backendUrl}/api/bot/deleteChat`, { params: { name } });
-    //         const data = await deleteChat(name);
-    //         console.log('data for delete chat ',data)
-    //         if (data.success) {
-    //             alert(data.message);
-    //             getChats();
-    //         }
-    //         else {
-    //             // alert(data.message);
-    //         }
-    //     }
-    //     catch (error) {
-    //         console.error('Error deleting chat:', error);
-    //         // alert('Failed to delete chat. Please try again.');
-    //     }
-    // }
-
     const handleDelete = async (name) => {
-    if (!window.confirm(`Delete chat "${name}"?`)) return;
-    try {
-      const msg = await deleteChat(name);
-      alert(msg);
-      // reload list
-      getChats();
-    } catch (err) {
-      alert("Could not delete chat: " + err.message);
-    }
-  };
+        if (!window.confirm(`Delete chat "${name}"?`)) return;
+        try {
+            const msg = await deleteChat(name);
+            toast.success(msg);
+            getChats();
+        } catch (err) {
+            toast.error("Could not delete chat: " + err.message);
+        }
+    };
     useEffect(() => {
         getChats();
     }, []);
+    if(getChatLoading){
+        return(
+            <ChatShimmer/>
+        )
+    }
 
     return (
         <div className='flex flex-row h-screen'>
-            {/* Sidebar */}
 
             <div className="w-[20%] bg-blue-green text-whitetext p-6 hidden sm:flex flex-col gap-4">
-                {/* New Chat Section */}
                 <div>
                     <div
                         className="flex items-center justify-between cursor-pointer hover:bg-blue-green-hover p-2 rounded-lg transition-all duration-200"
@@ -454,6 +435,19 @@ const Bot = () => {
                     </button>
                 </div>
             </div>
+            <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick={false}
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                    transition={Bounce}
+                  />
         </div>
     );
 };

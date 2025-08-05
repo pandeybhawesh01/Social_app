@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import Sidebar from '../coponents/sidebar';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { AppContext } from '../contex/AppContex';
-import { uploadImageFrontend, urlFor } from '../lib/cloudinary';
+import { uploadImageFrontend } from '../lib/cloudinary';
 import usePostViewModel from '../viewModels/postViewModel';
 import { CircularProgress } from '@mui/material';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 const collegeList = [
   "IIT Bombay", "IIT Delhi", "IIT Kanpur", "IIT Kharagpur", "IIT Madras",
@@ -17,7 +17,6 @@ const collegeList = [
 
 
 function Post() {
-  const { userData, backendUrl } = useContext(AppContext);
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -32,7 +31,6 @@ function Post() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // You can use postType === 'others' ? otherType : postType
     navigate('/dashboard');
   };
 
@@ -47,10 +45,10 @@ function Post() {
     try {
       const { secure_url, public_id } = await uploadImageFrontend(selectedFile);
       setImageUrl(secure_url);
-        console.log('iamge url',imageUrl)
+      console.log('iamge url', imageUrl)
       console.log("Uploaded to Cloudinary:", public_id);
     } catch (err) {
-      alert(err.message);
+      toast(err.message);
     } finally {
       setUploading(false);
     }
@@ -70,22 +68,16 @@ function Post() {
       formData.append('image', imageUrl);
 
       console.log("the data that is being uploaded ", formData);
-
-      // const { data } = await axios.post(`${backendUrl}/api/post/createPost`, formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // });
       const data = await createPost(formData);
       console.log("data er get from create post", data);
       if (data.success) {
-        alert('Post created successfully');
+        toast.success('Post created successfully');
         navigate('/dashboard');
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
     } catch (err) {
-      alert('Something went wrong while creating post');
+      toast.error('Something went wrong while creating post');
       console.log(err);
     }
   };
@@ -240,6 +232,20 @@ function Post() {
           </button>
         </form>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
+
     </div>
   );
 }
