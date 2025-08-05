@@ -23,7 +23,7 @@ export default function PostsListShimmer({ isSidebarOpen }) {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 px-32">
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 px-32">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
