@@ -1,4 +1,5 @@
 import userModel from "../models/userModel.js";
+import postModel from "../models/postModel.js";
 // import { uploadToCloudinary } from "../config/cloudinary.js";
 export const getUserData = async(req,res)=>{
     try{
@@ -70,15 +71,25 @@ export const updateUser = async (req, res) => {
       return res.json({ success: false, message: "User not found" });
     }
 
-    if (name != null)     user.name     = name;
-    if (bio != null)      user.bio      = bio;
-    if (website != null)  user.website  = website;
+    if (name     != null) user.name     = name;
+    if (bio      != null) user.bio      = bio;
+    if (website  != null) user.website  = website;
     if (location != null) user.location = location;
-    if (image != null)    user.image    = image;
-    if (banner != null)   user.banner   = banner;
-    
+    if (image    != null) user.image    = image;
+    if (banner   != null) user.banner   = banner;
 
     await user.save();
+    await postModel.updateMany(
+      { "owner.email": user.email },
+      {
+        $set: {
+          "owner.username": user.name,
+          "owner.profilePic": user.image,
+        }
+      }
+    );
+    // ────────────────────────────────────────────────────────────────
+
     return res.json({
       success: true,
       userData: {

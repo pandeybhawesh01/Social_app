@@ -3,10 +3,11 @@ import { botService } from "../services/botService";
 
 const useBotViewModel = () =>{
     const [loading, setLoading] = useState(false);
+    const [getChatLoading, setgetChatLoading] = useState(false);
     const [error, setError]     = useState(null);
 
     const getChat = async() =>{
-        setLoading(true);
+        setgetChatLoading(true);
         setError(null);
         try {
             const res = await botService.getChats();
@@ -22,7 +23,7 @@ const useBotViewModel = () =>{
             console.log(error)
         }
         finally{
-            setLoading(false);
+            setgetChatLoading(false);
         }
     }
     const deleteChat = async (name) => {
@@ -65,6 +66,7 @@ const useBotViewModel = () =>{
         getChat,
         deleteChat,
         createChat,
+        getChatLoading,
     }
 }
 export default useBotViewModel;

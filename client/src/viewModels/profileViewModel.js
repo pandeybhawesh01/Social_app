@@ -19,11 +19,13 @@ const useProfileViewModel = () => {
         throw new Error(res.data.message);
       }
     } catch (err) {
+      console.log(err)
       setError(
         (err.response && err.response.data && err.response.data.message) ||
           err.message ||
           'Failed to load profile'
       );
+      console.log(error)
       return null;
     } finally {
       setLoading(false);
