@@ -1,6 +1,6 @@
 
-export const BASE_URL = 'http://localhost:4000/api';
-// export const BASE_URL = 'https://social-app-taupe-one.vercel.app/api';
+// export const BASE_URL = 'http://localhost:4000/api';
+export const BASE_URL = 'https://social-app-taupe-one.vercel.app/api';
 // export const BASE_URL = 'https://social-app-backend-one.vercel.app/api';
 
 export const Endpoints = {
