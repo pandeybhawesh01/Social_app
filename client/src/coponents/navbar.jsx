@@ -47,7 +47,7 @@ function Navbar() {
     <div className='w-full flex justify-between itemns-center p-4 sm:px-12 absolute top-0'>
       <div className='w-28 sm:w-32'></div>
       {userData ?
-        <div className='w-10 h-10 flex justify-end items-end rounded-full bg-blue-green group text-white font-bold absolute right-10 z-20'>
+        <div className='w-10 h-10 flex justify-center items-center rounded-full bg-blue-green group text-white font-bold absolute right-0 md:right-10  z-20'>
           {userData.image ?
             (<img
               src={userData.image}
@@ -67,7 +67,7 @@ function Navbar() {
 
         </div> :
         <button onClick={() => navigate('/login')}
-          className='flex items-center gap-2 border border-bordergray rounded-full px-6 py-2 text-whitetext bg-blue-green hover:bg-blue-green-hover'>Login <img src={assets.arrow_icon} alt=""></img></button>}
+          className='flex items-center gap-2 border border-bordergray rounded-full px-6 py-2 text-whitetext bg-blue-green hover:bg-blue-green-hover right-0 md:right-10  z-20'>Login <img src={assets.arrow_icon} alt=""></img></button>}
       <ToastContainer
         position="top-right"
         autoClose={5000}

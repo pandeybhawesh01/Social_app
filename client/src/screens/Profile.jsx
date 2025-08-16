@@ -11,6 +11,7 @@ import ProfileHeader from '../coponents/ProfileHeader';
 import useProfileViewModel from '../viewModels/profileViewModel';
 import EditProfileModal from '../coponents/EditProfileModal';
 import ProfileShimmer from '../coponents/profileShimmer';
+import { Delete } from '@mui/icons-material';
 const mockProfile = {
   id: 1,
   name: 'Bhawesh Pandey',
@@ -32,7 +33,7 @@ export default function Profile() {
   // const [posts] = useState(mockPosts);
   const [activeTab, setActiveTab] = useState('posts');
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { profile, posts, loading, error, fetchProfile, fetchPosts,editProfile } = useProfileViewModel();
+  const { profile, posts, loading, error, fetchProfile, fetchPosts,editProfile,deletePost } = useProfileViewModel();
   const [isOpen,setIsOpen]= useState(false);
 
   useEffect(() => {
@@ -52,6 +53,10 @@ export default function Profile() {
       </div>
     )
   }
+  const postDelete=async(postId)=>{
+    await deletePost(postId)
+  }
+  console.log("posts",posts)
 
   return (
     // <div> mai kar satka hu</div>
@@ -94,16 +99,21 @@ export default function Profile() {
                     <article key={post.id} className="p-6 hover:bg-purple-50/50 transition-colors">
                       <div className="flex gap-4">
                         <img
-                          src={profile?.image}
+                           src={profile?.image || profile?.avatar || null}
                           alt={profile?.name}
                           className="w-12 h-12 rounded-full object-cover border border-purple-200"
                         />
                         <div className="flex-1 min-w-0">
+                          <div className='flex flex-row justify-between'>
                           <div className="flex items-center gap-2 mb-2">
                             <h4 className="font-semibold text-gray-800">{profile.name}</h4>
                             <span className="text-gray-500">@{profile.username}</span>
                             <span className="text-gray-400">·</span>
                             <span className="text-gray-500 text-sm">{post.timestamp}</span>
+                          </div>
+                          <div onClick={()=>postDelete(post._id)}>
+                            <Delete/>
+                          </div>
                           </div>
                           <p className="text-gray-800 leading-relaxed mb-3">{post.content}</p>
                           {post.image && (

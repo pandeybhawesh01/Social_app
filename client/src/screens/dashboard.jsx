@@ -10,10 +10,13 @@ import Navbar from '../coponents/navbar';
 import { useNavigate } from 'react-router-dom';
 import usePostViewModel from '../viewModels/postViewModel';
 import PostsListShimmer from '../coponents/PostsListShimmer';
+import useProfileViewModel from '../viewModels/profileViewModel';
+import { Plus } from 'lucide-react';
 
 function PostsList() {
   const { userData } = useContext(AppContext);
   const { loading, getDashboardPost, postComment, likePost, error } = usePostViewModel();
+  const { followUser } = useProfileViewModel();
 
   const [posts, setPosts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -24,11 +27,14 @@ function PostsList() {
   const [expandedContentPostId, setExpandedContentPostId] = useState(null);
   const [commenttext, setCommenttext] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-
-
+  const [usersFollowed, setusersFollowed] = useState([])
 
   const navigation = useNavigate();
-  console.log(userData)
+  console.log("userData", userData)
+  useEffect(() => {
+    setusersFollowed(userData?.following)
+  }, userData)
+
 
   // infinite scroll
   useEffect(() => {
@@ -43,13 +49,22 @@ function PostsList() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading,hasMore]);
+  }, [loading, hasMore]);
 
   // initial load
   useEffect(() => {
     fetchPosts();
   }, []);
 
+  const follow = async (email) => {
+    setusersFollowed([...usersFollowed, email])
+    try {
+      const res = await followUser(email)
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
   const fetchPosts = async () => {
     console.log('Fetching page:', pageRef.current);
     try {
@@ -66,59 +81,59 @@ function PostsList() {
 
   // like handler: toggles local state only
   const likePostfn = async (postId, postUserId) => {
-        setPosts(prev =>
-          prev.map(item => {
-            if (item.post._id === postId) {
-              const already = item.post.likes.some(l => l.email === userData.email);
-              const newLikes = already
-                ? item.post.likes.filter(l => l.email !== userData.email)
-                : [...item.post.likes, { email: userData.email }];
-              return {
-                ...item,
-                post: {
-                  ...item.post,
-                  likes: newLikes,
-                },
-              };
-            }
-            return item;
-          })
-        );
-        await likePost(postUserId, postId)
-      } 
+    setPosts(prev =>
+      prev.map(item => {
+        if (item.post._id === postId) {
+          const already = item.post.likes.some(l => l.email === userData.email);
+          const newLikes = already
+            ? item.post.likes.filter(l => l.email !== userData.email)
+            : [...item.post.likes, { email: userData.email }];
+          return {
+            ...item,
+            post: {
+              ...item.post,
+              likes: newLikes,
+            },
+          };
+        }
+        return item;
+      })
+    );
+    await likePost(postUserId, postId)
+  }
 
   // comment handler: appends new comment locally
   const comment = async text => {
     if (!expandedPostId || !text.trim()) return;
-   
-      
-        const newComment = {
-          comment: text,
-          createdAt: new Date().toISOString(),
-          user: {
-            username: userData.name,
-            profilePic: userData.image,
-            email: userData.email,
-          },
-        }
-        
-        setPosts(prev =>
-          prev.map(item =>
-            item.post._id === expandedPostId
-              ? {
-                
-                  ...item,
-                  
-                  post: {
-                    ...item.post,
-                    comments: [...item.post.comments, newComment],
-                  },
-                  
-                }
-              : item
-          )
-        );
-       await postComment(expandedPostUserId, expandedPostId, text);
+
+
+    const newComment = {
+      comment: text,
+      createdAt: new Date().toISOString(),
+      user: {
+        username: userData.name,
+        profilePic: userData.image,
+        email: userData.email,
+      },
+    }
+
+    setPosts(prev =>
+      prev.map(item =>
+        item.post._id === expandedPostId
+          ? {
+
+            ...item,
+
+            post: {
+              ...item.post,
+              comments: [...item.post.comments, newComment],
+            },
+
+          }
+          : item
+      )
+    );
+    await postComment(expandedPostUserId, expandedPostId, text);
   };
 
   // Helpers
@@ -155,7 +170,7 @@ function PostsList() {
   return (
     <div className="flex">
       <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} />
-      <Navbar/>
+      <Navbar />
       <div className={`flex-1 min-h-screen bg-admin-pattern py-10 px-4 sm:px-6 lg:px-8 ${isOpen ? 'md:ml-64' : 'md:ml-16'} transition-all duration-300`} >
         <div className="text-center mb-16">
           <h1
@@ -205,18 +220,36 @@ function PostsList() {
               <div className="flex items-center space-x-4 mb-4">
                 <div onClick={() => onProfileClick(post.owner.email)}>
 
-                {post.owner.profilePic ? (
-                  <div className='w-12 h-12 border-2 rounded-full border-[var(--hover-bg-grayhover)]'>
-                    <img src={post.owner.profilePic} alt={`${post.owner.username} avatar`} className="w-11 h-11 rounded-full object-cover" />
-                  </div>) :
-                  (<div className='w-12 h-12 border-2 rounded-full border-[var(--hover-bg-grayhover)] flex items-center justify-center'>
-                    <div className="w-9 h-9 rounded-full bg-blue-green flex items-center justify-center">
-                      <span className="text-white text-lg font-semibold">{post.owner.username.charAt(0).toUpperCase()}</span>
-                    </div>
-                  </div>)}
-                  </div>
+                  {post.owner.profilePic ? (
+                    <div className='w-12 h-12 border-2 rounded-full border-[var(--hover-bg-grayhover)]'>
+                      <img src={post.owner.profilePic} alt={`${post.owner.username} avatar`} className="w-11 h-11 rounded-full object-cover" />
+                    </div>) :
+                    (<div className='w-12 h-12 border-2 rounded-full border-[var(--hover-bg-grayhover)] flex items-center justify-center'>
+                      <div className="w-9 h-9 rounded-full bg-blue-green flex items-center justify-center">
+                        <span className="text-white text-lg font-semibold">{post.owner.username.charAt(0).toUpperCase()}</span>
+                      </div>
+                    </div>)}
+                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-lg font-semibold text-gray truncate">{post.owner.username}</p>
+                  <div className="flex items-center gap-3 cursor-pointer">
+                    <p className="text-lg font-semibold text-gray truncate">
+                      {post.owner.username}
+                    </p>
+
+                    {userData?.email !== post?.owner?.email && (
+                      usersFollowed.includes(post?.owner?.email) ? (
+                        <p className="text-sm text-gray truncate">Following</p>
+                      ) : (
+                        <div
+                          className="flex items-center"
+                          onClick={() => follow(post.owner.email)}
+                        >
+                          <Plus className="size-4 text-gray-500" />
+                          <p className="text-sm text-gray truncate">Follow</p>
+                        </div>
+                      )
+                    )}
+                  </div>
                   <p className="text-sm text-lightgray truncate">{post.post.college}</p>
                 </div>
                 <div className='flex-col items-center justify-center text-center'>
@@ -277,15 +310,15 @@ function PostsList() {
                   className="flex items-center space-x-1 px-2 py-1 rounded-full transition-all duration-300 hover:bg-grayhover" style={{ color: 'var(--bg-blue-green)' }}
                 >
 
-                  {post.post.likes.some(like => like.email === userData?.email) ? (<FavoriteSharpIcon />) :  (<FavoriteBorderOutlinedIcon />)}
+                  {post.post.likes.some(like => like.email === userData?.email) ? (<FavoriteSharpIcon />) : (<FavoriteBorderOutlinedIcon />)}
 
                   {/* <span>{post.post.likes.length +likecount}</span> */}
                   <span>
                     {
                       post.post.likes.some(like => like.email === userData?.email)
                         ? post.post.likes.length
-                      
-                          : post.post.likes.length
+
+                        : post.post.likes.length
                     }
                   </span>
 
@@ -311,15 +344,15 @@ function PostsList() {
                   {/* Add Comment Input */}
                   <div className="flex items-cemter gap-3">
                     {userData?.image ?
-                    (<img
-                      src={userData?.image}
-                      alt="You"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />):
-                    ( <div className="w-9 h-9 rounded-full bg-blue-green flex items-center justify-center">
-                      <span className="text-white text-lg font-semibold">{userData?.name.charAt(0).toUpperCase()}</span>
-                    </div>)
-}
+                      (<img
+                        src={userData?.image}
+                        alt="You"
+                        className="w-10 h-10 rounded-full object-cover"
+                      />) :
+                      (<div className="w-9 h-9 rounded-full bg-blue-green flex items-center justify-center">
+                        <span className="text-white text-lg font-semibold">{userData?.name.charAt(0).toUpperCase()}</span>
+                      </div>)
+                    }
                     <input
                       type="text"
                       placeholder="Write a comment..."

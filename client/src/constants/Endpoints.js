@@ -1,6 +1,6 @@
 
-export const BASE_URL = 'http://localhost:4000/api';
-// export const BASE_URL = 'https://social-app-taupe-one.vercel.app/api';
+// export const BASE_URL = 'http://localhost:4000/api';
+export const BASE_URL = 'https://social-app-taupe-one.vercel.app/api';
 // export const BASE_URL = 'https://social-app-backend-one.vercel.app/api';
 
 export const Endpoints = {
@@ -13,6 +13,8 @@ export const Endpoints = {
   commentOnPost: (expandedPostUserId, expandedPostId)=> `/post/comment/${expandedPostUserId}/${expandedPostId}`,
   likeOnPost: (likePostUserId, likePostId)=> `/post/like-post/${likePostUserId}/${likePostId}`,
   createPost: '/post/createPost',
+  deletePost:(postId)=>`/post/delete-post/${postId}`,
+  followUser:'/user/follow',
 
   BOT : {
     addChat: (selectedChatId) => `/bot/addChat/${selectedChatId}`,

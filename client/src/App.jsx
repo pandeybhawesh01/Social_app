@@ -34,7 +34,7 @@ const App = () => {
         <Route path="/adminList" element={<AdminList/>}/>
         <Route path="/postList" element={<PostList/>}/>
         <Route path="/bot" element={<ProtectedRoute><Bot/></ProtectedRoute>}/>
-        <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
+        <Route path="/profile" element={<Profile/>}/>
         <Route path="/post-profile/:email" element={<ProtectedRoute><PostProfile/></ProtectedRoute>}/>
       </Routes>
     </ThemeProvider>
