@@ -13,6 +13,8 @@ export const Endpoints = {
   commentOnPost: (expandedPostUserId, expandedPostId)=> `/post/comment/${expandedPostUserId}/${expandedPostId}`,
   likeOnPost: (likePostUserId, likePostId)=> `/post/like-post/${likePostUserId}/${likePostId}`,
   createPost: '/post/createPost',
+  deletePost:(postId)=>`/post/delete-post/${postId}`,
+  followUser:'/user/follow',
 
   BOT : {
     addChat: (selectedChatId) => `/bot/addChat/${selectedChatId}`,

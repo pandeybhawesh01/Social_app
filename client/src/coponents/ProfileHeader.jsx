@@ -16,8 +16,8 @@ export default function ProfileHeader({ profile, onEditProfile }) {
         location : profile.location,
         website: profile.website,
         joinedDate: "10/01/2005",
-        following: profile.followers,
-        followers: profile.following,
+        following: profile.following,
+        followers: profile.followers,
     }
 
     return (

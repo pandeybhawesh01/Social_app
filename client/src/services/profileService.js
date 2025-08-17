@@ -4,6 +4,7 @@ import { Endpoints } from '../constants/Endpoints';
 export const profileService = {
   fetchProfile: () => apiClient.get(Endpoints.profileData),
   fetchUserPosts: () => apiClient.get(Endpoints.userPosts),
+  dletePost:(postId)=>apiClient.delete(Endpoints.deletePost(postId)),
   fetchUserPostsByEmail: (email)=>apiClient.get(Endpoints.userPostsByEmail(email)),
   fetchUserProfileByEmail:(email)=>apiClient.get(Endpoints.profileDataByEmail(email)),
   updateProfile: (payload) => {
@@ -15,5 +16,8 @@ export const profileService = {
     }
     // otherwise send JSON
     return apiClient.put(Endpoints.updateProfile, payload);
+  },
+  followUser:(email)=>{
+    return apiClient.post(Endpoints.followUser,{email})
   }
 };

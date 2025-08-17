@@ -18,7 +18,7 @@ axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
       if(data.success)
       {
         setIsLoggedIn(true);
-        getUserData();
+        await getUserData();
       }
     }
     catch(err)

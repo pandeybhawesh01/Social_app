@@ -84,6 +84,31 @@ const useProfileViewModel = () => {
     }
   };
 
+  const deletePost= async(postId)=>{
+    setLoading(true);
+    setError(null);
+    try{
+      const res= await profileService.dletePost(postId);
+      if(res.data.success)
+        {
+          console.log(res)
+          return res;
+        } 
+        else{
+          setError("error deleting post");
+        }
+         console.log(res)
+    }
+    catch(err)
+    {
+      setError(err);
+      console.log(err)
+    }
+    finally{
+    setLoading(false)
+    }
+  }
+
   const fetchPostsByEmail= async(email)=>{
     setLoading(true);
     setError(null);
@@ -127,6 +152,25 @@ const useProfileViewModel = () => {
       setLoading(false);
     }
   };
+  const followUser = async(email)=>{
+    setLoading(true);
+    setError(null);
+    try{
+      const res = profileService.followUser(email);
+      if(res.data.success)
+      {
+        return("followed user");
+      }
+      else{
+        throw new Error(res.data.message);
+      }
+    }
+    catch(error)
+    {
+      setError(error);
+    }
+    setLoading(false);
+  }
 
   return {
     profile,
@@ -137,7 +181,9 @@ const useProfileViewModel = () => {
     fetchPosts,
     editProfile,
     fetchPostsByEmail,
-    fetchProfileByEmail
+    fetchProfileByEmail,
+    followUser,
+    deletePost
   };
 };
 
