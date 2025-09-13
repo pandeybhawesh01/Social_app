@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { AppContext } from '../contex/AppContex';
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import { Facebook } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
   const navigate = useNavigate();
@@ -15,8 +15,6 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [state, setState] = useState('Login');
-
-  // loading state drives both spinner and disabling
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -31,17 +29,18 @@ function Login() {
       } else {
         res = await axios.post(`${backendUrl}/api/auth/login`, { email, password });
       }
-      console.log("first". res)
 
-      if (res.data.success) {
+      if (res.data.success === true) {
+        toast.success(res.data.message || "Logged in successfully!");
         setIsLoggedIn(true);
         await getUserData();
         navigate('/dashboard');
       } else {
-        toast.error(res.data.message);
+        toast.error(res.data.message || "Something went wrong!");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
+      console.error("Login error:", err);
+      toast.error(err.response?.data?.message || err.message || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -53,6 +52,7 @@ function Login() {
         <h2 className="text-5xl font-extrabold text-gray font-outfit">College Verse</h2>
         <p className="mt-2 text-xl text-moderategray">Upload and share your best reels</p>
       </div>
+
       <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/3 bg-whitebg border border-bordergray shadow-2xl rounded-2xl p-8">
         <div className="mb-2 px-4">
           <h2 className="text-center text-2xl font-semibold text-gray border-b pb-2">
@@ -144,6 +144,19 @@ function Login() {
           </p>
         )}
       </div>
+
+      {/* Toast container always rendered */}
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        pauseOnFocusLoss
+        theme="colored"
+        transition={Bounce}
+      />
     </div>
   );
 }
